@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/dialog'
 import { ExpenseSchema, ExpenseCategoryEnum } from '@/lib/ValidationSchema'
 import { toast } from 'sonner'
-import { ExpenseCategory } from '@/generated/prisma/enums'
+import { ExpenseCategory } from '../../../generated/prisma/enums'
 
 type ExpenseFormValues = z.input<typeof ExpenseSchema>
 
