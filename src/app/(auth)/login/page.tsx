@@ -195,7 +195,7 @@ export default function AuthPage() {
                 <Input
                   id='reg-name'
                   type='text'
-                  placeholder='John Doe'
+                  placeholder='John'
                   {...registerAuthField('firstName')}
                   required
                 />
@@ -210,7 +210,7 @@ export default function AuthPage() {
                 <Input
                   id='reg-name'
                   type='text'
-                  placeholder='John Doe'
+                  placeholder='Doe'
                   {...registerAuthField('lastName')}
                   required
                 />

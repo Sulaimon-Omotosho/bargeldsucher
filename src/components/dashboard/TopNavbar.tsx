@@ -3,11 +3,12 @@
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import UserDropdown from './UserDropdown'
-import Sidebar from './Sidebar'
+// import Sidebar from './Sidebar'
 import { Bell, Menu, Loader2, AlertCircle } from 'lucide-react'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { useQuery } from '@tanstack/react-query'
 import { getDashboardDataAction } from '@/app/actions/dashboard'
+import { SidebarTrigger } from '../ui/sidebar'
 
 export default function TopNavbar() {
   const pathname = usePathname()
@@ -37,21 +38,16 @@ export default function TopNavbar() {
 
   return (
     <header className='sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200/60 bg-white/80 backdrop-blur-md px-4 md:px-8 shadow-sm shadow-slate-100/30 select-none'>
+      <SidebarTrigger />
       {/* Left side: Mobile Menu Trigger + Route Dynamic Headers */}
       <div className='flex items-center gap-3'>
-        <div className='md:hidden'>
+        {/* <div className='md:hidden'>
           <Sheet>
             <SheetTrigger
               className='rounded-xl p-2 text-slate-500 hover:bg-slate-100/80 hover:text-slate-900 transition-all focus:outline-none'
               aria-label='Open navigation menu'
             >
-              {/* <button
-                type='button'
-                className='rounded-xl p-2 text-slate-500 hover:bg-slate-100/80 hover:text-slate-900 transition-all focus:outline-none'
-                aria-label='Open navigation menu'
-              > */}
               <Menu className='h-5 w-5' />
-              {/* </button> */}
             </SheetTrigger>
 
             <SheetContent
@@ -61,7 +57,7 @@ export default function TopNavbar() {
               <Sidebar isMobile={true} />
             </SheetContent>
           </Sheet>
-        </div>
+        </div> */}
 
         <div className='flex items-center gap-2'>
           <h2 className='text-md md:text-lg font-bold tracking-tight text-slate-900 capitalize'>
