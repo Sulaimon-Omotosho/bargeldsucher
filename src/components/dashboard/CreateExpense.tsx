@@ -22,7 +22,7 @@ import { ExpenseSchema, ExpenseCategoryEnum } from '@/lib/ValidationSchema'
 import { toast } from 'sonner'
 import { ExpenseCategory } from '@/generated/prisma/enums'
 
-type ExpenseFormValues = z.infer<typeof ExpenseSchema>
+type ExpenseFormValues = z.input<typeof ExpenseSchema>
 
 export default function CreateExpense({ errandId }: { errandId?: string }) {
   const [isOpen, setIsOpen] = useState(false)

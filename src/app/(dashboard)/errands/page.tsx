@@ -5,10 +5,10 @@ import { Wallet, ClipboardList } from 'lucide-react'
 import CreateErrand from '@/components/dashboard/CreateErrand'
 import { useQuery } from '@tanstack/react-query'
 import { getErrandsAction } from '@/app/actions/errands'
-import { Errand, SerializedErrand } from '@/types/types'
+import { Errand } from '@/types/types'
 
 export default function ErrandsPage() {
-  const { data: errands = [], isLoading } = useQuery<SerializedErrand[]>({
+  const { data: errands = [], isLoading } = useQuery<Errand[]>({
     queryKey: ['errands'],
     queryFn: getErrandsAction,
   })
