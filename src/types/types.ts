@@ -1,5 +1,5 @@
-import { ExpenseCategory } from '@/generated/prisma/enums'
-import { Prisma } from '@/generated/prisma/client'
+import { ExpenseCategory } from '../../generated/prisma/enums'
+import { Prisma } from '../../generated/prisma/client'
 
 type ErrandModel = Prisma.ErrandGetPayload<{
   include: {

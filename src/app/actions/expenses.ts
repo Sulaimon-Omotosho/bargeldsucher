@@ -3,7 +3,6 @@
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import type { CreateExpenseInput, Expense } from '@/types/types'
-import { ExpenseCategory } from '@/generated/prisma/enums'
 
 export async function getAllExpensesAction(): Promise<Expense[]> {
   const session = await auth()
