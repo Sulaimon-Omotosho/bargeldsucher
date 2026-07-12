@@ -5,6 +5,7 @@ import { getAllExpensesAction } from '@/app/actions/expenses'
 import { Receipt, Calendar, ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
 import { Expense } from '@/types/types'
+import ExpensesSkeleton from '@/components/skeletons/ExpensesSkeleton'
 
 export default function ExpensesPage() {
   const { data: expenses = [], isLoading } = useQuery<Expense[]>({
@@ -13,6 +14,8 @@ export default function ExpensesPage() {
   })
 
   const totalOutflow = expenses.reduce((acc, curr) => acc + curr.amount, 0)
+
+  if (isLoading) return <ExpensesSkeleton />
 
   return (
     <div className='space-y-8 animate-in fade-in duration-300'>

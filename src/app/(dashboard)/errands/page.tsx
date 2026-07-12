@@ -6,6 +6,7 @@ import CreateErrand from '@/components/dashboard/CreateErrand'
 import { useQuery } from '@tanstack/react-query'
 import { getErrandsAction } from '@/app/actions/errands'
 import { Errand } from '@/types/types'
+import ErrandsSkeleton from '@/components/skeletons/ErrandsSkeleton'
 
 export default function ErrandsPage() {
   const { data: errands = [], isLoading } = useQuery<Errand[]>({
@@ -19,6 +20,8 @@ export default function ErrandsPage() {
     0,
   )
   const totalErrandsCount = errands.length
+
+  if (isLoading) return <ErrandsSkeleton />
 
   return (
     <div className='space-y-8 animate-in fade-in duration-300'>

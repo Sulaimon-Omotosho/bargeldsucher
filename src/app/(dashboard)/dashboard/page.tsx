@@ -3,6 +3,7 @@
 import { getDashboardDataAction } from '@/app/actions/dashboard'
 import CreateErrand from '@/components/dashboard/CreateErrand'
 import CreateExpense from '@/components/dashboard/CreateExpense'
+import DashboardSkeleton from '@/components/skeletons/DashboardSkeleton'
 import { useQuery } from '@tanstack/react-query'
 import {
   TrendingUp,
@@ -23,28 +24,8 @@ export default function DashboardPage() {
 
   // Loading Skeleton State
   if (isLoading) {
-    return (
-      <div className='space-y-8 animate-pulse p-4'>
-        <div className='flex justify-between items-center'>
-          <div className='h-8 w-48 bg-slate-200 rounded-lg' />
-          <div className='h-10 w-32 bg-slate-200 rounded-lg' />
-        </div>
-        <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className='h-32 bg-slate-100 rounded-2xl border border-slate-200/60'
-            />
-          ))}
-        </div>
-        <div className='grid gap-6 lg:grid-cols-3'>
-          <div className='lg:col-span-2 h-64 bg-slate-100 rounded-2xl' />
-          <div className='h-64 bg-slate-100 rounded-2xl' />
-        </div>
-      </div>
-    )
+    return <DashboardSkeleton />
   }
-
   // Graceful Error fallback
   if (isError) {
     return (

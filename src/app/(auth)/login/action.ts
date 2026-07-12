@@ -25,6 +25,7 @@ export async function registerUser(formData: FormData) {
 
   await prisma.user.create({
     data: {
+      name: `${firstName} ${lastName}`.trim(),
       email,
       firstName,
       lastName,

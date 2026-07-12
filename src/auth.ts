@@ -35,7 +35,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           },
         })
 
-        if (!user?.password) return null
+        if (!user) {
+          return null
+        }
+
+        if (!user.password) {
+          throw new Error(
+            'This account uses Google Sign-In. Please continue with Google.',
+          )
+        }
 
         const valid = await bcrypt.compare(
           credentials.password as string,
@@ -54,6 +62,35 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
 
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === 'google' && user.email) {
+        const dbUser = await prisma.user.findUnique({
+          where: {
+            email: user.email,
+          },
+        })
+
+        if (dbUser && dbUser.name && (!dbUser.firstName || !dbUser.lastName)) {
+          const names = dbUser.name.trim().split(/\s+/)
+
+          const firstName = names.shift() ?? ''
+          const lastName = names.join(' ')
+
+          await prisma.user.update({
+            where: {
+              id: dbUser.id,
+            },
+            data: {
+              firstName,
+              lastName,
+            },
+          })
+        }
+      }
+
+      return true
+    },
+
     async jwt({ token, user }) {
       if (user) token.id = user.id
       return token

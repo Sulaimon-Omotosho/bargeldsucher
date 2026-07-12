@@ -8,6 +8,7 @@ import { Errand } from '@/types/types'
 import { useQuery } from '@tanstack/react-query'
 import { getErrandAction } from '@/app/actions/errands'
 import CreateExpense from '@/components/dashboard/CreateExpense'
+import ErrandDetailSkeleton from '@/components/skeletons/ErrandDetailSkeleton'
 
 export default function ErrandDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -22,11 +23,7 @@ export default function ErrandDetailPage() {
     enabled: !!id,
   })
 
-  if (isLoading) {
-    return (
-      <div className='py-20 text-center text-slate-500'>Loading errand...</div>
-    )
-  }
+  if (isLoading) return <ErrandDetailSkeleton />
 
   if (isError || !errand) {
     notFound()

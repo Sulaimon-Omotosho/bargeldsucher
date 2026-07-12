@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { useEffect, useState } from 'react'
+import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -17,17 +17,23 @@ type LoginFormValues = z.infer<typeof LoginSchema>
 type RegisterFormValues = z.infer<typeof RegisterSchema>
 
 export default function AuthPage() {
+  const { data: session, status } = useSession()
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.replace('/dashboard')
+    }
+  }, [status, router])
 
   // REACT HOOK FORMS
   const {
     register: registerLoginField,
     handleSubmit: handleLoginSubmit,
     formState: { errors: loginErrors },
-    reset: resetLoginForm,
   } = useForm<LoginFormValues>({
     resolver: zodResolver(LoginSchema),
   })
@@ -36,7 +42,6 @@ export default function AuthPage() {
     register: registerAuthField,
     handleSubmit: handleRegisterSubmit,
     formState: { errors: registerErrors },
-    reset: resetRegisterForm,
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(RegisterSchema),
   })
@@ -45,7 +50,6 @@ export default function AuthPage() {
   const onLoginSubmit = async (data: LoginFormValues) => {
     setError(null)
     setLoading(true)
-    // console.log('Login:', data)
 
     const res = await signIn('credentials', {
       email: data.email,
@@ -66,14 +70,13 @@ export default function AuthPage() {
     setError(null)
     setLoading(true)
 
-    // Convert structured object to FormData for server actions compatibility
     const formData = new FormData()
-    formData.append('name', data.firstName)
-    formData.append('name', data.lastName)
+    formData.append('firstName', data.firstName)
+    formData.append('lastName', data.lastName)
     formData.append('email', data.email)
     formData.append('password', data.password)
 
-    // console.log(Object.fromEntries(formData.entries()))
+    console.log(Object.fromEntries(formData.entries()))
 
     const res = await registerUser(formData)
 
@@ -91,12 +94,42 @@ export default function AuthPage() {
 
   return (
     <div className='flex min-h-screen items-center justify-center bg-slate-100 p-4 font-sans'>
-      <div className='relative flex h-150 w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl'>
-        {/*LEFT SIDE: LOGIN FORM */}
-        <div className='flex w-1/2 flex-col justify-center px-12 transition-all duration-500'>
-          <div className='w-full max-w-sm space-y-6'>
+      <div className='relative flex min-h-[550px] md:h-150 w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl'>
+        {/* LEFT SIDE: LOGIN FORM */}
+        <div
+          className={`w-full md:w-1/2 flex flex-col justify-center px-6 py-8 sm:px-12 transition-all duration-500 ${
+            activeTab === 'login' ? 'flex' : 'hidden md:flex'
+          }`}
+        >
+          <div className='w-full max-w-sm mx-auto space-y-6'>
+            {/* Mobile-Only Tabs Toggle */}
+            <div className='block md:hidden w-full mb-2'>
+              <Tabs
+                value={activeTab}
+                onValueChange={(val) => {
+                  setError(null)
+                  setActiveTab(val as 'login' | 'register')
+                }}
+              >
+                <TabsList className='grid w-full grid-cols-2 bg-slate-100 p-1 rounded-xl text-slate-600'>
+                  <TabsTrigger
+                    value='login'
+                    className='rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900'
+                  >
+                    Login
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value='register'
+                    className='rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900'
+                  >
+                    Register
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+
             <div className='space-y-2'>
-              <h1 className='text-3xl font-bold tracking-tight text-slate-900'>
+              <h1 className='text-2xl sm:text-3xl font-bold tracking-tight text-slate-900'>
                 Welcome back
               </h1>
               <p className='text-sm text-slate-500'>
@@ -137,7 +170,7 @@ export default function AuthPage() {
                   {...registerLoginField('password')}
                   required
                 />
-                {loginErrors.email && (
+                {loginErrors.password && (
                   <p className='text-red-500 text-sm'>
                     {loginErrors.password?.message}
                   </p>
@@ -169,10 +202,40 @@ export default function AuthPage() {
         </div>
 
         {/* RIGHT SIDE: REGISTER FORM */}
-        <div className='flex w-1/2 flex-col justify-center px-12 transition-all duration-500'>
-          <div className='w-full max-w-sm space-y-6'>
-            <div className='space-y-2'>
-              <h1 className='text-3xl font-bold tracking-tight text-slate-900'>
+        <div
+          className={`w-full md:w-1/2 flex flex-col justify-center px-6 py-8 sm:px-12 transition-all duration-500 ${
+            activeTab === 'register' ? 'flex' : 'hidden md:flex'
+          }`}
+        >
+          <div className='w-full max-w-sm mx-auto space-y-4 sm:space-y-6'>
+            {/* Mobile-Only Tabs Toggle */}
+            <div className='block md:hidden w-full mb-2'>
+              <Tabs
+                value={activeTab}
+                onValueChange={(val) => {
+                  setError(null)
+                  setActiveTab(val as 'login' | 'register')
+                }}
+              >
+                <TabsList className='grid w-full grid-cols-2 bg-slate-100 p-1 rounded-xl text-slate-600'>
+                  <TabsTrigger
+                    value='login'
+                    className='rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900'
+                  >
+                    Login
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value='register'
+                    className='rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900'
+                  >
+                    Register
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+
+            <div className='space-y-1 sm:space-y-2'>
+              <h1 className='text-2xl sm:text-3xl font-bold tracking-tight text-slate-900'>
                 Create an account
               </h1>
               <p className='text-sm text-slate-500'>
@@ -188,37 +251,39 @@ export default function AuthPage() {
 
             <form
               onSubmit={handleRegisterSubmit(onRegisterSubmit)}
-              className='space-y-4'
+              className='space-y-3 sm:space-y-4'
             >
-              <div className='space-y-1'>
-                <Label htmlFor='reg-name'>First Name</Label>
-                <Input
-                  id='reg-name'
-                  type='text'
-                  placeholder='John'
-                  {...registerAuthField('firstName')}
-                  required
-                />
-                {loginErrors.email && (
-                  <p className='text-red-500 text-sm'>
-                    {registerErrors.firstName?.message}
-                  </p>
-                )}
-              </div>
-              <div className='space-y-1'>
-                <Label htmlFor='reg-name'>Last Name</Label>
-                <Input
-                  id='reg-name'
-                  type='text'
-                  placeholder='Doe'
-                  {...registerAuthField('lastName')}
-                  required
-                />
-                {loginErrors.email && (
-                  <p className='text-red-500 text-sm'>
-                    {registerErrors.lastName?.message}
-                  </p>
-                )}
+              <div className='grid grid-cols-2 gap-2'>
+                <div className='space-y-1'>
+                  <Label htmlFor='reg-firstname'>First Name</Label>
+                  <Input
+                    id='reg-firstname'
+                    type='text'
+                    placeholder='John'
+                    {...registerAuthField('firstName')}
+                    required
+                  />
+                  {registerErrors.firstName && (
+                    <p className='text-red-500 text-sm'>
+                      {registerErrors.firstName?.message}
+                    </p>
+                  )}
+                </div>
+                <div className='space-y-1'>
+                  <Label htmlFor='reg-lastname'>Last Name</Label>
+                  <Input
+                    id='reg-lastname'
+                    type='text'
+                    placeholder='Doe'
+                    {...registerAuthField('lastName')}
+                    required
+                  />
+                  {registerErrors.lastName && (
+                    <p className='text-red-500 text-sm'>
+                      {registerErrors.lastName?.message}
+                    </p>
+                  )}
+                </div>
               </div>
               <div className='space-y-1'>
                 <Label htmlFor='reg-email'>Email Address</Label>
@@ -229,7 +294,7 @@ export default function AuthPage() {
                   {...registerAuthField('email')}
                   required
                 />
-                {loginErrors.email && (
+                {registerErrors.email && (
                   <p className='text-red-500 text-sm'>
                     {registerErrors.email?.message}
                   </p>
@@ -243,7 +308,7 @@ export default function AuthPage() {
                   {...registerAuthField('password')}
                   required
                 />
-                {loginErrors.email && (
+                {registerErrors.password && (
                   <p className='text-red-500 text-sm'>
                     {registerErrors.password?.message}
                   </p>
@@ -254,7 +319,7 @@ export default function AuthPage() {
               </Button>
             </form>
 
-            <div className='relative w-full my-2'>
+            <div className='relative w-full my-1'>
               <div className='absolute inset-0 flex items-center'>
                 <span className='w-full border-t' />
               </div>
@@ -274,9 +339,9 @@ export default function AuthPage() {
           </div>
         </div>
 
-        {/* SLIDING INTRO PANEL OVERLAY */}
+        {/* SLIDING INTRO PANEL OVERLAY - HIDDEN COMPLETELY ON MOBILE VIEWPORTS */}
         <div
-          className={`absolute top-0 left-0 h-full w-1/2 bg-slate-900 text-white transition-transform duration-500 ease-in-out flex flex-col justify-between p-12 z-20 ${
+          className={`hidden absolute top-0 left-0 h-full w-1/2 bg-slate-900 text-white transition-transform duration-500 ease-in-out md:flex flex-col justify-between p-12 z-20 ${
             activeTab === 'login' ? 'translate-x-full' : 'translate-x-0'
           }`}
           style={{
@@ -332,7 +397,7 @@ export default function AuthPage() {
               <TabsList className='grid w-full grid-cols-2 bg-white/10 p-0 text-white border border-white/10 backdrop-blur-sm'>
                 <TabsTrigger
                   value='login'
-                  className='data-[state=active]:bg-white data-[state=active]:text-slate-900 rounded-r-none  '
+                  className='data-[state=active]:bg-white data-[state=active]:text-slate-900 rounded-r-none'
                 >
                   Login
                 </TabsTrigger>
