@@ -29,7 +29,7 @@ export const RegisterSchema = z
   .object({
     firstName: z.string().min(2, 'Name must be at least 2 characters long'),
     lastName: z.string().min(2, 'Name must be at least 2 characters long'),
-    email: z.string().email('Please enter a valid email address'),
+    email: z.email('Please enter a valid email address'),
     password: passwordSchema,
     confirmPassword: z.string(),
   })
@@ -37,6 +37,18 @@ export const RegisterSchema = z
     path: ['confirmPassword'],
     message: 'Passwords do not match',
   })
+
+export const RegisterServerSchema = z.object({
+  firstName: z.string().min(2, 'Name must be at least 2 characters long'),
+  lastName: z.string().min(2, 'Name must be at least 2 characters long'),
+  email: z.email('Please enter a valid email address'),
+  password: passwordSchema,
+  //   confirmPassword: z.string(),
+  // })
+  // .refine((data) => data.password === data.confirmPassword, {
+  //   path: ['confirmPassword'],
+  //   message: 'Passwords do not match',
+})
 
 export const ErrandSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters long'),

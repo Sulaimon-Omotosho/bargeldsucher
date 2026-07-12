@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { RegisterSchema } from '@/lib/ValidationSchema'
+import { RegisterServerSchema } from '@/lib/ValidationSchema'
 import bcrypt from 'bcryptjs'
 
 export async function registerUser(formData: FormData) {
@@ -21,7 +21,7 @@ export async function registerUser(formData: FormData) {
     return { error: 'Email already registered' }
   }
 
-  const parsed = RegisterSchema.safeParse({
+  const parsed = RegisterServerSchema.safeParse({
     email,
     password,
     firstName,

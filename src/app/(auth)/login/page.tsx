@@ -418,10 +418,10 @@ export default function AuthPage() {
                 </div> */}
               </div>
               <div className='space-y-1'>
-                <Label htmlFor='confirm-password'>Confirm Password</Label>
+                <Label htmlFor='reg-confirm-password'>Confirm Password</Label>
                 <div className='relative'>
                   <Input
-                    id='confirm-password'
+                    id='reg-confirm-password'
                     type={showPassword ? 'text' : 'password'}
                     {...registerAuthField('confirmPassword')}
                     onPaste={(e) => e.preventDefault()}
