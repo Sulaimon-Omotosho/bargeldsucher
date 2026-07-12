@@ -9,17 +9,34 @@ export const ExpenseCategoryEnum = z.enum([
   'OTHER',
 ])
 
+export const passwordSchema = z
+  .string()
+  .min(8, 'Password must be at least 8 characters.')
+  .regex(/[A-Z]/, 'Must contain at least one uppercase letter.')
+  .regex(/[a-z]/, 'Must contain at least one lowercase letter.')
+  .regex(/[0-9]/, 'Must contain at least one number.')
+  .regex(
+    /[!@#$%^&*(),.?":{}|<>]/,
+    'Must contain at least one special character.',
+  )
+
 export const LoginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(1, 'Password is required'),
+  password: passwordSchema,
 })
 
-export const RegisterSchema = z.object({
-  firstName: z.string().min(2, 'Name must be at least 2 characters long'),
-  lastName: z.string().min(2, 'Name must be at least 2 characters long'),
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters long'),
-})
+export const RegisterSchema = z
+  .object({
+    firstName: z.string().min(2, 'Name must be at least 2 characters long'),
+    lastName: z.string().min(2, 'Name must be at least 2 characters long'),
+    email: z.string().email('Please enter a valid email address'),
+    password: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ['confirmPassword'],
+    message: 'Passwords do not match',
+  })
 
 export const ErrandSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters long'),
@@ -66,22 +83,3 @@ export const ExpenseSchema = z.object({
     ),
   errandId: z.string().min(1, 'Please map this to a valid Errand loop'),
 })
-// export const ExpenseSchema = z.object({
-//   description: z.string().min(3, 'Description must be at least 3 characters'),
-//   amount: z.number().positive('Must be greater than zero'),
-//   category: ExpenseCategoryEnum.default('OTHER'),
-//   vendor: z.string().optional().nullable(),
-//   receiptUrl: z
-//     .string()
-//     .url('Must be a valid URL link')
-//     .optional()
-//     .or(z.literal('')),
-//   expenseDate: z
-//     .string()
-//     .min(1, 'Date is required')
-//     .refine(
-//       (date) => new Date(date) <= new Date(),
-//       'Expense date cannot be in the future',
-//     ),
-//   errandId: z.string().min(1, 'Please map this to a valid Errand loop'),
-// })

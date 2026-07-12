@@ -12,6 +12,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { registerUser } from './action'
 import { LoginSchema, RegisterSchema } from '@/lib/ValidationSchema'
 import z from 'zod'
+import { PasswordRequirement } from '@/components/shared/AuthUtils'
+import { Eye, EyeOff } from 'lucide-react'
 
 type LoginFormValues = z.infer<typeof LoginSchema>
 type RegisterFormValues = z.infer<typeof RegisterSchema>
@@ -22,6 +24,7 @@ export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -41,10 +44,13 @@ export default function AuthPage() {
   const {
     register: registerAuthField,
     handleSubmit: handleRegisterSubmit,
+    watch,
     formState: { errors: registerErrors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(RegisterSchema),
   })
+
+  const password = watch('password', '')
 
   // SUBMIT HANDLERS
   const onLoginSubmit = async (data: LoginFormValues) => {
@@ -91,6 +97,29 @@ export default function AuthPage() {
       })
     }
   }
+
+  const passwordRules = {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /\d/.test(password),
+    special: /[^A-Za-z0-9]/.test(password),
+  }
+  const strength =
+    Number(passwordRules.length) +
+    Number(passwordRules.uppercase) +
+    Number(passwordRules.lowercase) +
+    Number(passwordRules.number) +
+    Number(passwordRules.special)
+  const strengthText =
+    strength <= 2 ? 'Weak' : strength <= 4 ? 'Medium' : 'Strong'
+  const strengthWidth = `${(strength / 5) * 100}%`
+  const strengthColor =
+    strength <= 2
+      ? 'bg-red-500'
+      : strength <= 4
+        ? 'bg-yellow-500'
+        : 'bg-green-500'
 
   return (
     <div className='flex min-h-screen items-center justify-center bg-slate-100 p-4 font-sans'>
@@ -154,7 +183,6 @@ export default function AuthPage() {
                   type='email'
                   placeholder='you@example.com'
                   {...registerLoginField('email')}
-                  required
                 />
                 {loginErrors.email && (
                   <p className='text-red-500 text-sm'>
@@ -164,12 +192,26 @@ export default function AuthPage() {
               </div>
               <div className='space-y-1'>
                 <Label htmlFor='password'>Password</Label>
-                <Input
-                  id='password'
-                  type='password'
-                  {...registerLoginField('password')}
-                  required
-                />
+                <div className='relative'>
+                  <Input
+                    id='reg-password'
+                    type={showPassword ? 'text' : 'password'}
+                    {...registerLoginField('password')}
+                    className='pr-10'
+                  />
+
+                  <button
+                    type='button'
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700'
+                  >
+                    {showPassword ? (
+                      <EyeOff className='h-4 w-4' />
+                    ) : (
+                      <Eye className='h-4 w-4' />
+                    )}
+                  </button>
+                </div>
                 {loginErrors.password && (
                   <p className='text-red-500 text-sm'>
                     {loginErrors.password?.message}
@@ -251,7 +293,7 @@ export default function AuthPage() {
 
             <form
               onSubmit={handleRegisterSubmit(onRegisterSubmit)}
-              className='space-y-3 sm:space-y-4'
+              className='space-y-2'
             >
               <div className='grid grid-cols-2 gap-2'>
                 <div className='space-y-1'>
@@ -261,7 +303,6 @@ export default function AuthPage() {
                     type='text'
                     placeholder='John'
                     {...registerAuthField('firstName')}
-                    required
                   />
                   {registerErrors.firstName && (
                     <p className='text-red-500 text-sm'>
@@ -276,7 +317,6 @@ export default function AuthPage() {
                     type='text'
                     placeholder='Doe'
                     {...registerAuthField('lastName')}
-                    required
                   />
                   {registerErrors.lastName && (
                     <p className='text-red-500 text-sm'>
@@ -292,7 +332,6 @@ export default function AuthPage() {
                   type='email'
                   placeholder='you@example.com'
                   {...registerAuthField('email')}
-                  required
                 />
                 {registerErrors.email && (
                   <p className='text-red-500 text-sm'>
@@ -302,15 +341,108 @@ export default function AuthPage() {
               </div>
               <div className='space-y-1'>
                 <Label htmlFor='reg-password'>Password</Label>
-                <Input
-                  id='reg-password'
-                  type='password'
-                  {...registerAuthField('password')}
-                  required
-                />
+                <div className='relative'>
+                  <Input
+                    id='reg-password'
+                    type={showPassword ? 'text' : 'password'}
+                    {...registerAuthField('password')}
+                    className='pr-10'
+                  />
+
+                  <button
+                    type='button'
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700'
+                  >
+                    {showPassword ? (
+                      <EyeOff className='h-4 w-4' />
+                    ) : (
+                      <Eye className='h-4 w-4' />
+                    )}
+                  </button>
+                </div>
+
+                <div className='space-y-2'>
+                  <div className='h-2 overflow-hidden rounded-full bg-slate-200'>
+                    <div
+                      className={`h-full transition-all duration-300 ${strengthColor}`}
+                      style={{
+                        width: strengthWidth,
+                      }}
+                    />
+                  </div>
+
+                  <div className='flex gap-2'>
+                    <p
+                      className={`text-xs font-semibold ${
+                        strength <= 2
+                          ? 'text-red-500'
+                          : strength <= 4
+                            ? 'text-yellow-500'
+                            : 'text-green-500'
+                      }`}
+                    >
+                      {strengthText}
+                    </p>
+                    <p className='text-xs text-slate-400'>
+                      {strength * 20}% Secure
+                    </p>
+                  </div>
+                </div>
                 {registerErrors.password && (
                   <p className='text-red-500 text-sm'>
                     {registerErrors.password?.message}
+                  </p>
+                )}
+
+                {/* <div className='rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-2'>
+                  <PasswordRequirement valid={passwordRules.length}>
+                    At least 8 characters
+                  </PasswordRequirement>
+
+                  <PasswordRequirement valid={passwordRules.uppercase}>
+                    One uppercase letter
+                  </PasswordRequirement>
+
+                  <PasswordRequirement valid={passwordRules.lowercase}>
+                    One lowercase letter
+                  </PasswordRequirement>
+
+                  <PasswordRequirement valid={passwordRules.number}>
+                    One number
+                  </PasswordRequirement>
+
+                  <PasswordRequirement valid={passwordRules.special}>
+                    One special character
+                  </PasswordRequirement>
+                </div> */}
+              </div>
+              <div className='space-y-1'>
+                <Label htmlFor='confirm-password'>Confirm Password</Label>
+                <div className='relative'>
+                  <Input
+                    id='confirm-password'
+                    type={showPassword ? 'text' : 'password'}
+                    {...registerAuthField('confirmPassword')}
+                    onPaste={(e) => e.preventDefault()}
+                    className='pr-10'
+                  />
+
+                  <button
+                    type='button'
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700'
+                  >
+                    {showPassword ? (
+                      <EyeOff className='h-4 w-4' />
+                    ) : (
+                      <Eye className='h-4 w-4' />
+                    )}
+                  </button>
+                </div>
+                {registerErrors.confirmPassword && (
+                  <p className='text-red-500 text-sm'>
+                    {registerErrors.confirmPassword?.message}
                   </p>
                 )}
               </div>
