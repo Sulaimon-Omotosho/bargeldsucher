@@ -250,6 +250,12 @@ export default function AuthPage() {
               Continue with Google
             </Button>
           </div>
+          <Link
+            href='/forgot-password'
+            className='hover:underline hover:text-amber-700 text-amber-500 transition-all duration-300'
+          >
+            Forgotten Password
+          </Link>
         </div>
 
         {/* RIGHT SIDE: REGISTER FORM */}
