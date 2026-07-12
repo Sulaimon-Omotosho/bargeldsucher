@@ -20,6 +20,16 @@ export const passwordSchema = z
     'Must contain at least one special character.',
   )
 
+export const ResetPasswordSchema = z
+  .object({
+    password: passwordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ['confirmPassword'],
+    message: 'Passwords do not match',
+  })
+
 export const LoginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: passwordSchema,
@@ -43,11 +53,6 @@ export const RegisterServerSchema = z.object({
   lastName: z.string().min(2, 'Name must be at least 2 characters long'),
   email: z.email('Please enter a valid email address'),
   password: passwordSchema,
-  //   confirmPassword: z.string(),
-  // })
-  // .refine((data) => data.password === data.confirmPassword, {
-  //   path: ['confirmPassword'],
-  //   message: 'Passwords do not match',
 })
 
 export const ErrandSchema = z.object({

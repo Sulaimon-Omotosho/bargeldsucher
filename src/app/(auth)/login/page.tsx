@@ -9,11 +9,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { registerUser } from './action'
+import { registerUser } from '../action'
 import { LoginSchema, RegisterSchema } from '@/lib/ValidationSchema'
 import z from 'zod'
-import { PasswordRequirement } from '@/components/shared/AuthUtils'
 import { Eye, EyeOff } from 'lucide-react'
+import Link from 'next/link'
 
 type LoginFormValues = z.infer<typeof LoginSchema>
 type RegisterFormValues = z.infer<typeof RegisterSchema>
@@ -82,7 +82,7 @@ export default function AuthPage() {
     formData.append('email', data.email)
     formData.append('password', data.password)
 
-    console.log(Object.fromEntries(formData.entries()))
+    // console.log(Object.fromEntries(formData.entries()))
 
     const res = await registerUser(formData)
 
@@ -131,6 +131,15 @@ export default function AuthPage() {
           }`}
         >
           <div className='w-full max-w-sm mx-auto space-y-6'>
+            {/* Logo  */}
+            <Link href='/' className='flex items-center gap-2 w-fit md:hidden'>
+              <div className='h-8 w-8 rounded-lg bg-emerald-500 flex items-center justify-center font-bold text-slate-900'>
+                B
+              </div>
+              <span className='font-semibold text-lg tracking-wider'>
+                bargeldsucher
+              </span>
+            </Link>
             {/* Mobile-Only Tabs Toggle */}
             <div className='block md:hidden w-full mb-2'>
               <Tabs
@@ -250,6 +259,15 @@ export default function AuthPage() {
           }`}
         >
           <div className='w-full max-w-sm mx-auto space-y-4 sm:space-y-6'>
+            {/* Logo  */}
+            <Link href='/' className='flex items-center gap-2 w-fit md:hidden'>
+              <div className='h-8 w-8 rounded-lg bg-emerald-500 flex items-center justify-center font-bold text-slate-900'>
+                B
+              </div>
+              <span className='font-semibold text-lg tracking-wider'>
+                bargeldsucher
+              </span>
+            </Link>
             {/* Mobile-Only Tabs Toggle */}
             <div className='block md:hidden w-full mb-2'>
               <Tabs
@@ -428,7 +446,7 @@ export default function AuthPage() {
                     className='pr-10'
                   />
 
-                  <button
+                  {/* <button
                     type='button'
                     onClick={() => setShowPassword((prev) => !prev)}
                     className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700'
@@ -438,7 +456,7 @@ export default function AuthPage() {
                     ) : (
                       <Eye className='h-4 w-4' />
                     )}
-                  </button>
+                  </button> */}
                 </div>
                 {registerErrors.confirmPassword && (
                   <p className='text-red-500 text-sm'>
@@ -484,14 +502,14 @@ export default function AuthPage() {
           }}
         >
           {/* Brand/Logo Area */}
-          <div className='flex items-center gap-2'>
+          <Link href='/' className='flex items-center gap-2 w-fit'>
             <div className='h-8 w-8 rounded-lg bg-emerald-500 flex items-center justify-center font-bold text-slate-900'>
               B
             </div>
             <span className='font-semibold text-lg tracking-wider text-emerald-400'>
               bargeldsucher
             </span>
-          </div>
+          </Link>
 
           {/* Contextual Context Message */}
           <div className='space-y-4 max-w-xs transition-opacity duration-300'>

@@ -8,19 +8,24 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String   @id @default(cuid())
+  name          String?
   firstName     String?
   lastName      String?
-  email         String    @unique
+  email         String   @unique
+  emailVerified DateTime?
   password      String?
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  name          String?
-  emailVerified DateTime?
-  accounts      Account[]
-  errands       Errand[]
-  sessions      Session[]
+
+  isOAuth       Boolean  @default(false)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  errands             Errand[]
+  accounts            Account[]
+  sessions            Session[]
+  passwordResetTokens PasswordResetToken[]
 }
 
 model Account {
@@ -53,6 +58,20 @@ model VerificationToken {
   expires    DateTime
 
   @@id([identifier, token])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expires   DateTime
+
+  userId    String
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expires])
 }
 
 model Errand {

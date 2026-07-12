@@ -388,6 +388,7 @@ export const ModelName = {
   Account: 'Account',
   Session: 'Session',
   VerificationToken: 'VerificationToken',
+  PasswordResetToken: 'PasswordResetToken',
   Errand: 'Errand',
   Expense: 'Expense'
 } as const
@@ -405,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "errand" | "expense"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "passwordResetToken" | "errand" | "expense"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -705,6 +706,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PasswordResetToken: {
+      payload: Prisma.$PasswordResetTokenPayload<ExtArgs>
+      fields: Prisma.PasswordResetTokenFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PasswordResetTokenFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PasswordResetTokenFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        findFirst: {
+          args: Prisma.PasswordResetTokenFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PasswordResetTokenFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        findMany: {
+          args: Prisma.PasswordResetTokenFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        create: {
+          args: Prisma.PasswordResetTokenCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        createMany: {
+          args: Prisma.PasswordResetTokenCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PasswordResetTokenCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        delete: {
+          args: Prisma.PasswordResetTokenDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        update: {
+          args: Prisma.PasswordResetTokenUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        deleteMany: {
+          args: Prisma.PasswordResetTokenDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PasswordResetTokenUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PasswordResetTokenUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        upsert: {
+          args: Prisma.PasswordResetTokenUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        aggregate: {
+          args: Prisma.PasswordResetTokenAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePasswordResetToken>
+        }
+        groupBy: {
+          args: Prisma.PasswordResetTokenGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PasswordResetTokenGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PasswordResetTokenCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PasswordResetTokenCountAggregateOutputType> | number
+        }
+      }
+    }
     Errand: {
       payload: Prisma.$ErrandPayload<ExtArgs>
       fields: Prisma.ErrandFieldRefs
@@ -894,15 +969,16 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const UserScalarFieldEnum = {
   id: 'id',
+  name: 'name',
   firstName: 'firstName',
   lastName: 'lastName',
   email: 'email',
+  emailVerified: 'emailVerified',
   password: 'password',
   image: 'image',
+  isOAuth: 'isOAuth',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  name: 'name',
-  emailVerified: 'emailVerified'
+  updatedAt: 'updatedAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -941,6 +1017,17 @@ export const VerificationTokenScalarFieldEnum = {
 } as const
 
 export type VerificationTokenScalarFieldEnum = (typeof VerificationTokenScalarFieldEnum)[keyof typeof VerificationTokenScalarFieldEnum]
+
+
+export const PasswordResetTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  expires: 'expires',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
 
 
 export const ErrandScalarFieldEnum = {
@@ -1027,6 +1114,13 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -1199,6 +1293,7 @@ export type GlobalOmitConfig = {
   account?: Prisma.AccountOmit
   session?: Prisma.SessionOmit
   verificationToken?: Prisma.VerificationTokenOmit
+  passwordResetToken?: Prisma.PasswordResetTokenOmit
   errand?: Prisma.ErrandOmit
   expense?: Prisma.ExpenseOmit
 }
