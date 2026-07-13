@@ -48,6 +48,21 @@ export type PasswordResetToken = Prisma.PasswordResetTokenModel
  */
 export type Errand = Prisma.ErrandModel
 /**
+ * Model ErrandNote
+ * 
+ */
+export type ErrandNote = Prisma.ErrandNoteModel
+/**
+ * Model ActivityLog
+ * 
+ */
+export type ActivityLog = Prisma.ActivityLogModel
+/**
+ * Model Attachment
+ * 
+ */
+export type Attachment = Prisma.AttachmentModel
+/**
  * Model Expense
  * 
  */

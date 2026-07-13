@@ -50,3 +50,33 @@ export interface DashboardMasterData {
     safeBufferPercentage: number
   }
 }
+
+export interface Expense {
+  id: string
+  errandId: string
+  amount: number
+  description?: string | null
+  createdAt: Date | string
+}
+
+export interface Errand {
+  id: string
+  title: string
+  description?: string | null
+  amountReceived: number
+  totalSpent: number
+  status: string
+  userId: string
+  createdAt: Date | string
+  updatedAt: Date | string
+  expenses: Expense[]
+}
+
+export interface ErrandsPayload {
+  errands: Errand[]
+  summary: {
+    totalAllocated: number
+    totalSpent: number
+    totalErrandsCount: number
+  }
+}

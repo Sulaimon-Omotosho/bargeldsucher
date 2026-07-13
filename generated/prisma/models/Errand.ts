@@ -39,6 +39,9 @@ export type ErrandMinAggregateOutputType = {
   title: string | null
   description: string | null
   amountReceived: runtime.Decimal | null
+  status: $Enums.ErrandStatus | null
+  isArchived: boolean | null
+  deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
   userId: string | null
@@ -49,6 +52,9 @@ export type ErrandMaxAggregateOutputType = {
   title: string | null
   description: string | null
   amountReceived: runtime.Decimal | null
+  status: $Enums.ErrandStatus | null
+  isArchived: boolean | null
+  deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
   userId: string | null
@@ -59,6 +65,9 @@ export type ErrandCountAggregateOutputType = {
   title: number
   description: number
   amountReceived: number
+  status: number
+  isArchived: number
+  deletedAt: number
   createdAt: number
   updatedAt: number
   userId: number
@@ -79,6 +88,9 @@ export type ErrandMinAggregateInputType = {
   title?: true
   description?: true
   amountReceived?: true
+  status?: true
+  isArchived?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
   userId?: true
@@ -89,6 +101,9 @@ export type ErrandMaxAggregateInputType = {
   title?: true
   description?: true
   amountReceived?: true
+  status?: true
+  isArchived?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
   userId?: true
@@ -99,6 +114,9 @@ export type ErrandCountAggregateInputType = {
   title?: true
   description?: true
   amountReceived?: true
+  status?: true
+  isArchived?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
   userId?: true
@@ -196,6 +214,9 @@ export type ErrandGroupByOutputType = {
   title: string
   description: string | null
   amountReceived: runtime.Decimal
+  status: $Enums.ErrandStatus | null
+  isArchived: boolean | null
+  deletedAt: Date | null
   createdAt: Date
   updatedAt: Date
   userId: string
@@ -229,11 +250,17 @@ export type ErrandWhereInput = {
   title?: Prisma.StringFilter<"Errand"> | string
   description?: Prisma.StringNullableFilter<"Errand"> | string | null
   amountReceived?: Prisma.DecimalFilter<"Errand"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumErrandStatusNullableFilter<"Errand"> | $Enums.ErrandStatus | null
+  isArchived?: Prisma.BoolNullableFilter<"Errand"> | boolean | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"Errand"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Errand"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Errand"> | Date | string
   userId?: Prisma.StringFilter<"Errand"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   expenses?: Prisma.ExpenseListRelationFilter
+  notes?: Prisma.ErrandNoteListRelationFilter
+  activities?: Prisma.ActivityLogListRelationFilter
+  attachments?: Prisma.AttachmentListRelationFilter
 }
 
 export type ErrandOrderByWithRelationInput = {
@@ -241,11 +268,17 @@ export type ErrandOrderByWithRelationInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   amountReceived?: Prisma.SortOrder
+  status?: Prisma.SortOrderInput | Prisma.SortOrder
+  isArchived?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   expenses?: Prisma.ExpenseOrderByRelationAggregateInput
+  notes?: Prisma.ErrandNoteOrderByRelationAggregateInput
+  activities?: Prisma.ActivityLogOrderByRelationAggregateInput
+  attachments?: Prisma.AttachmentOrderByRelationAggregateInput
 }
 
 export type ErrandWhereUniqueInput = Prisma.AtLeast<{
@@ -256,11 +289,17 @@ export type ErrandWhereUniqueInput = Prisma.AtLeast<{
   title?: Prisma.StringFilter<"Errand"> | string
   description?: Prisma.StringNullableFilter<"Errand"> | string | null
   amountReceived?: Prisma.DecimalFilter<"Errand"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumErrandStatusNullableFilter<"Errand"> | $Enums.ErrandStatus | null
+  isArchived?: Prisma.BoolNullableFilter<"Errand"> | boolean | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"Errand"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Errand"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Errand"> | Date | string
   userId?: Prisma.StringFilter<"Errand"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   expenses?: Prisma.ExpenseListRelationFilter
+  notes?: Prisma.ErrandNoteListRelationFilter
+  activities?: Prisma.ActivityLogListRelationFilter
+  attachments?: Prisma.AttachmentListRelationFilter
 }, "id">
 
 export type ErrandOrderByWithAggregationInput = {
@@ -268,6 +307,9 @@ export type ErrandOrderByWithAggregationInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   amountReceived?: Prisma.SortOrder
+  status?: Prisma.SortOrderInput | Prisma.SortOrder
+  isArchived?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -286,6 +328,9 @@ export type ErrandScalarWhereWithAggregatesInput = {
   title?: Prisma.StringWithAggregatesFilter<"Errand"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Errand"> | string | null
   amountReceived?: Prisma.DecimalWithAggregatesFilter<"Errand"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumErrandStatusNullableWithAggregatesFilter<"Errand"> | $Enums.ErrandStatus | null
+  isArchived?: Prisma.BoolNullableWithAggregatesFilter<"Errand"> | boolean | null
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Errand"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Errand"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Errand"> | Date | string
   userId?: Prisma.StringWithAggregatesFilter<"Errand"> | string
@@ -296,10 +341,16 @@ export type ErrandCreateInput = {
   title: string
   description?: string | null
   amountReceived: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.ErrandStatus | null
+  isArchived?: boolean | null
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutErrandsInput
   expenses?: Prisma.ExpenseCreateNestedManyWithoutErrandInput
+  notes?: Prisma.ErrandNoteCreateNestedManyWithoutErrandInput
+  activities?: Prisma.ActivityLogCreateNestedManyWithoutErrandInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutErrandInput
 }
 
 export type ErrandUncheckedCreateInput = {
@@ -307,10 +358,16 @@ export type ErrandUncheckedCreateInput = {
   title: string
   description?: string | null
   amountReceived: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.ErrandStatus | null
+  isArchived?: boolean | null
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: string
   expenses?: Prisma.ExpenseUncheckedCreateNestedManyWithoutErrandInput
+  notes?: Prisma.ErrandNoteUncheckedCreateNestedManyWithoutErrandInput
+  activities?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutErrandInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutErrandInput
 }
 
 export type ErrandUpdateInput = {
@@ -318,10 +375,16 @@ export type ErrandUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountReceived?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.NullableEnumErrandStatusFieldUpdateOperationsInput | $Enums.ErrandStatus | null
+  isArchived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutErrandsNestedInput
   expenses?: Prisma.ExpenseUpdateManyWithoutErrandNestedInput
+  notes?: Prisma.ErrandNoteUpdateManyWithoutErrandNestedInput
+  activities?: Prisma.ActivityLogUpdateManyWithoutErrandNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutErrandNestedInput
 }
 
 export type ErrandUncheckedUpdateInput = {
@@ -329,10 +392,16 @@ export type ErrandUncheckedUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountReceived?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.NullableEnumErrandStatusFieldUpdateOperationsInput | $Enums.ErrandStatus | null
+  isArchived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   expenses?: Prisma.ExpenseUncheckedUpdateManyWithoutErrandNestedInput
+  notes?: Prisma.ErrandNoteUncheckedUpdateManyWithoutErrandNestedInput
+  activities?: Prisma.ActivityLogUncheckedUpdateManyWithoutErrandNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutErrandNestedInput
 }
 
 export type ErrandCreateManyInput = {
@@ -340,6 +409,9 @@ export type ErrandCreateManyInput = {
   title: string
   description?: string | null
   amountReceived: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.ErrandStatus | null
+  isArchived?: boolean | null
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: string
@@ -350,6 +422,9 @@ export type ErrandUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountReceived?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.NullableEnumErrandStatusFieldUpdateOperationsInput | $Enums.ErrandStatus | null
+  isArchived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -359,6 +434,9 @@ export type ErrandUncheckedUpdateManyInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountReceived?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.NullableEnumErrandStatusFieldUpdateOperationsInput | $Enums.ErrandStatus | null
+  isArchived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -379,6 +457,9 @@ export type ErrandCountOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   amountReceived?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  isArchived?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -393,6 +474,9 @@ export type ErrandMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   amountReceived?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  isArchived?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -403,6 +487,9 @@ export type ErrandMinOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   amountReceived?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  isArchived?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -467,6 +554,56 @@ export type DecimalFieldUpdateOperationsInput = {
   divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
+export type NullableEnumErrandStatusFieldUpdateOperationsInput = {
+  set?: $Enums.ErrandStatus | null
+}
+
+export type NullableBoolFieldUpdateOperationsInput = {
+  set?: boolean | null
+}
+
+export type ErrandCreateNestedOneWithoutNotesInput = {
+  create?: Prisma.XOR<Prisma.ErrandCreateWithoutNotesInput, Prisma.ErrandUncheckedCreateWithoutNotesInput>
+  connectOrCreate?: Prisma.ErrandCreateOrConnectWithoutNotesInput
+  connect?: Prisma.ErrandWhereUniqueInput
+}
+
+export type ErrandUpdateOneRequiredWithoutNotesNestedInput = {
+  create?: Prisma.XOR<Prisma.ErrandCreateWithoutNotesInput, Prisma.ErrandUncheckedCreateWithoutNotesInput>
+  connectOrCreate?: Prisma.ErrandCreateOrConnectWithoutNotesInput
+  upsert?: Prisma.ErrandUpsertWithoutNotesInput
+  connect?: Prisma.ErrandWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ErrandUpdateToOneWithWhereWithoutNotesInput, Prisma.ErrandUpdateWithoutNotesInput>, Prisma.ErrandUncheckedUpdateWithoutNotesInput>
+}
+
+export type ErrandCreateNestedOneWithoutActivitiesInput = {
+  create?: Prisma.XOR<Prisma.ErrandCreateWithoutActivitiesInput, Prisma.ErrandUncheckedCreateWithoutActivitiesInput>
+  connectOrCreate?: Prisma.ErrandCreateOrConnectWithoutActivitiesInput
+  connect?: Prisma.ErrandWhereUniqueInput
+}
+
+export type ErrandUpdateOneRequiredWithoutActivitiesNestedInput = {
+  create?: Prisma.XOR<Prisma.ErrandCreateWithoutActivitiesInput, Prisma.ErrandUncheckedCreateWithoutActivitiesInput>
+  connectOrCreate?: Prisma.ErrandCreateOrConnectWithoutActivitiesInput
+  upsert?: Prisma.ErrandUpsertWithoutActivitiesInput
+  connect?: Prisma.ErrandWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ErrandUpdateToOneWithWhereWithoutActivitiesInput, Prisma.ErrandUpdateWithoutActivitiesInput>, Prisma.ErrandUncheckedUpdateWithoutActivitiesInput>
+}
+
+export type ErrandCreateNestedOneWithoutAttachmentsInput = {
+  create?: Prisma.XOR<Prisma.ErrandCreateWithoutAttachmentsInput, Prisma.ErrandUncheckedCreateWithoutAttachmentsInput>
+  connectOrCreate?: Prisma.ErrandCreateOrConnectWithoutAttachmentsInput
+  connect?: Prisma.ErrandWhereUniqueInput
+}
+
+export type ErrandUpdateOneRequiredWithoutAttachmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.ErrandCreateWithoutAttachmentsInput, Prisma.ErrandUncheckedCreateWithoutAttachmentsInput>
+  connectOrCreate?: Prisma.ErrandCreateOrConnectWithoutAttachmentsInput
+  upsert?: Prisma.ErrandUpsertWithoutAttachmentsInput
+  connect?: Prisma.ErrandWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ErrandUpdateToOneWithWhereWithoutAttachmentsInput, Prisma.ErrandUpdateWithoutAttachmentsInput>, Prisma.ErrandUncheckedUpdateWithoutAttachmentsInput>
+}
+
 export type ErrandCreateNestedOneWithoutExpensesInput = {
   create?: Prisma.XOR<Prisma.ErrandCreateWithoutExpensesInput, Prisma.ErrandUncheckedCreateWithoutExpensesInput>
   connectOrCreate?: Prisma.ErrandCreateOrConnectWithoutExpensesInput
@@ -486,9 +623,15 @@ export type ErrandCreateWithoutUserInput = {
   title: string
   description?: string | null
   amountReceived: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.ErrandStatus | null
+  isArchived?: boolean | null
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   expenses?: Prisma.ExpenseCreateNestedManyWithoutErrandInput
+  notes?: Prisma.ErrandNoteCreateNestedManyWithoutErrandInput
+  activities?: Prisma.ActivityLogCreateNestedManyWithoutErrandInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutErrandInput
 }
 
 export type ErrandUncheckedCreateWithoutUserInput = {
@@ -496,9 +639,15 @@ export type ErrandUncheckedCreateWithoutUserInput = {
   title: string
   description?: string | null
   amountReceived: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.ErrandStatus | null
+  isArchived?: boolean | null
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   expenses?: Prisma.ExpenseUncheckedCreateNestedManyWithoutErrandInput
+  notes?: Prisma.ErrandNoteUncheckedCreateNestedManyWithoutErrandInput
+  activities?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutErrandInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutErrandInput
 }
 
 export type ErrandCreateOrConnectWithoutUserInput = {
@@ -535,9 +684,252 @@ export type ErrandScalarWhereInput = {
   title?: Prisma.StringFilter<"Errand"> | string
   description?: Prisma.StringNullableFilter<"Errand"> | string | null
   amountReceived?: Prisma.DecimalFilter<"Errand"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumErrandStatusNullableFilter<"Errand"> | $Enums.ErrandStatus | null
+  isArchived?: Prisma.BoolNullableFilter<"Errand"> | boolean | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"Errand"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Errand"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Errand"> | Date | string
   userId?: Prisma.StringFilter<"Errand"> | string
+}
+
+export type ErrandCreateWithoutNotesInput = {
+  id?: string
+  title: string
+  description?: string | null
+  amountReceived: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.ErrandStatus | null
+  isArchived?: boolean | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutErrandsInput
+  expenses?: Prisma.ExpenseCreateNestedManyWithoutErrandInput
+  activities?: Prisma.ActivityLogCreateNestedManyWithoutErrandInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutErrandInput
+}
+
+export type ErrandUncheckedCreateWithoutNotesInput = {
+  id?: string
+  title: string
+  description?: string | null
+  amountReceived: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.ErrandStatus | null
+  isArchived?: boolean | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  userId: string
+  expenses?: Prisma.ExpenseUncheckedCreateNestedManyWithoutErrandInput
+  activities?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutErrandInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutErrandInput
+}
+
+export type ErrandCreateOrConnectWithoutNotesInput = {
+  where: Prisma.ErrandWhereUniqueInput
+  create: Prisma.XOR<Prisma.ErrandCreateWithoutNotesInput, Prisma.ErrandUncheckedCreateWithoutNotesInput>
+}
+
+export type ErrandUpsertWithoutNotesInput = {
+  update: Prisma.XOR<Prisma.ErrandUpdateWithoutNotesInput, Prisma.ErrandUncheckedUpdateWithoutNotesInput>
+  create: Prisma.XOR<Prisma.ErrandCreateWithoutNotesInput, Prisma.ErrandUncheckedCreateWithoutNotesInput>
+  where?: Prisma.ErrandWhereInput
+}
+
+export type ErrandUpdateToOneWithWhereWithoutNotesInput = {
+  where?: Prisma.ErrandWhereInput
+  data: Prisma.XOR<Prisma.ErrandUpdateWithoutNotesInput, Prisma.ErrandUncheckedUpdateWithoutNotesInput>
+}
+
+export type ErrandUpdateWithoutNotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountReceived?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.NullableEnumErrandStatusFieldUpdateOperationsInput | $Enums.ErrandStatus | null
+  isArchived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutErrandsNestedInput
+  expenses?: Prisma.ExpenseUpdateManyWithoutErrandNestedInput
+  activities?: Prisma.ActivityLogUpdateManyWithoutErrandNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutErrandNestedInput
+}
+
+export type ErrandUncheckedUpdateWithoutNotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountReceived?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.NullableEnumErrandStatusFieldUpdateOperationsInput | $Enums.ErrandStatus | null
+  isArchived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  expenses?: Prisma.ExpenseUncheckedUpdateManyWithoutErrandNestedInput
+  activities?: Prisma.ActivityLogUncheckedUpdateManyWithoutErrandNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutErrandNestedInput
+}
+
+export type ErrandCreateWithoutActivitiesInput = {
+  id?: string
+  title: string
+  description?: string | null
+  amountReceived: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.ErrandStatus | null
+  isArchived?: boolean | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutErrandsInput
+  expenses?: Prisma.ExpenseCreateNestedManyWithoutErrandInput
+  notes?: Prisma.ErrandNoteCreateNestedManyWithoutErrandInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutErrandInput
+}
+
+export type ErrandUncheckedCreateWithoutActivitiesInput = {
+  id?: string
+  title: string
+  description?: string | null
+  amountReceived: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.ErrandStatus | null
+  isArchived?: boolean | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  userId: string
+  expenses?: Prisma.ExpenseUncheckedCreateNestedManyWithoutErrandInput
+  notes?: Prisma.ErrandNoteUncheckedCreateNestedManyWithoutErrandInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutErrandInput
+}
+
+export type ErrandCreateOrConnectWithoutActivitiesInput = {
+  where: Prisma.ErrandWhereUniqueInput
+  create: Prisma.XOR<Prisma.ErrandCreateWithoutActivitiesInput, Prisma.ErrandUncheckedCreateWithoutActivitiesInput>
+}
+
+export type ErrandUpsertWithoutActivitiesInput = {
+  update: Prisma.XOR<Prisma.ErrandUpdateWithoutActivitiesInput, Prisma.ErrandUncheckedUpdateWithoutActivitiesInput>
+  create: Prisma.XOR<Prisma.ErrandCreateWithoutActivitiesInput, Prisma.ErrandUncheckedCreateWithoutActivitiesInput>
+  where?: Prisma.ErrandWhereInput
+}
+
+export type ErrandUpdateToOneWithWhereWithoutActivitiesInput = {
+  where?: Prisma.ErrandWhereInput
+  data: Prisma.XOR<Prisma.ErrandUpdateWithoutActivitiesInput, Prisma.ErrandUncheckedUpdateWithoutActivitiesInput>
+}
+
+export type ErrandUpdateWithoutActivitiesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountReceived?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.NullableEnumErrandStatusFieldUpdateOperationsInput | $Enums.ErrandStatus | null
+  isArchived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutErrandsNestedInput
+  expenses?: Prisma.ExpenseUpdateManyWithoutErrandNestedInput
+  notes?: Prisma.ErrandNoteUpdateManyWithoutErrandNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutErrandNestedInput
+}
+
+export type ErrandUncheckedUpdateWithoutActivitiesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountReceived?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.NullableEnumErrandStatusFieldUpdateOperationsInput | $Enums.ErrandStatus | null
+  isArchived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  expenses?: Prisma.ExpenseUncheckedUpdateManyWithoutErrandNestedInput
+  notes?: Prisma.ErrandNoteUncheckedUpdateManyWithoutErrandNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutErrandNestedInput
+}
+
+export type ErrandCreateWithoutAttachmentsInput = {
+  id?: string
+  title: string
+  description?: string | null
+  amountReceived: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.ErrandStatus | null
+  isArchived?: boolean | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutErrandsInput
+  expenses?: Prisma.ExpenseCreateNestedManyWithoutErrandInput
+  notes?: Prisma.ErrandNoteCreateNestedManyWithoutErrandInput
+  activities?: Prisma.ActivityLogCreateNestedManyWithoutErrandInput
+}
+
+export type ErrandUncheckedCreateWithoutAttachmentsInput = {
+  id?: string
+  title: string
+  description?: string | null
+  amountReceived: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.ErrandStatus | null
+  isArchived?: boolean | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  userId: string
+  expenses?: Prisma.ExpenseUncheckedCreateNestedManyWithoutErrandInput
+  notes?: Prisma.ErrandNoteUncheckedCreateNestedManyWithoutErrandInput
+  activities?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutErrandInput
+}
+
+export type ErrandCreateOrConnectWithoutAttachmentsInput = {
+  where: Prisma.ErrandWhereUniqueInput
+  create: Prisma.XOR<Prisma.ErrandCreateWithoutAttachmentsInput, Prisma.ErrandUncheckedCreateWithoutAttachmentsInput>
+}
+
+export type ErrandUpsertWithoutAttachmentsInput = {
+  update: Prisma.XOR<Prisma.ErrandUpdateWithoutAttachmentsInput, Prisma.ErrandUncheckedUpdateWithoutAttachmentsInput>
+  create: Prisma.XOR<Prisma.ErrandCreateWithoutAttachmentsInput, Prisma.ErrandUncheckedCreateWithoutAttachmentsInput>
+  where?: Prisma.ErrandWhereInput
+}
+
+export type ErrandUpdateToOneWithWhereWithoutAttachmentsInput = {
+  where?: Prisma.ErrandWhereInput
+  data: Prisma.XOR<Prisma.ErrandUpdateWithoutAttachmentsInput, Prisma.ErrandUncheckedUpdateWithoutAttachmentsInput>
+}
+
+export type ErrandUpdateWithoutAttachmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountReceived?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.NullableEnumErrandStatusFieldUpdateOperationsInput | $Enums.ErrandStatus | null
+  isArchived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutErrandsNestedInput
+  expenses?: Prisma.ExpenseUpdateManyWithoutErrandNestedInput
+  notes?: Prisma.ErrandNoteUpdateManyWithoutErrandNestedInput
+  activities?: Prisma.ActivityLogUpdateManyWithoutErrandNestedInput
+}
+
+export type ErrandUncheckedUpdateWithoutAttachmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountReceived?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.NullableEnumErrandStatusFieldUpdateOperationsInput | $Enums.ErrandStatus | null
+  isArchived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  expenses?: Prisma.ExpenseUncheckedUpdateManyWithoutErrandNestedInput
+  notes?: Prisma.ErrandNoteUncheckedUpdateManyWithoutErrandNestedInput
+  activities?: Prisma.ActivityLogUncheckedUpdateManyWithoutErrandNestedInput
 }
 
 export type ErrandCreateWithoutExpensesInput = {
@@ -545,9 +937,15 @@ export type ErrandCreateWithoutExpensesInput = {
   title: string
   description?: string | null
   amountReceived: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.ErrandStatus | null
+  isArchived?: boolean | null
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutErrandsInput
+  notes?: Prisma.ErrandNoteCreateNestedManyWithoutErrandInput
+  activities?: Prisma.ActivityLogCreateNestedManyWithoutErrandInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutErrandInput
 }
 
 export type ErrandUncheckedCreateWithoutExpensesInput = {
@@ -555,9 +953,15 @@ export type ErrandUncheckedCreateWithoutExpensesInput = {
   title: string
   description?: string | null
   amountReceived: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.ErrandStatus | null
+  isArchived?: boolean | null
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: string
+  notes?: Prisma.ErrandNoteUncheckedCreateNestedManyWithoutErrandInput
+  activities?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutErrandInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutErrandInput
 }
 
 export type ErrandCreateOrConnectWithoutExpensesInput = {
@@ -581,9 +985,15 @@ export type ErrandUpdateWithoutExpensesInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountReceived?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.NullableEnumErrandStatusFieldUpdateOperationsInput | $Enums.ErrandStatus | null
+  isArchived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutErrandsNestedInput
+  notes?: Prisma.ErrandNoteUpdateManyWithoutErrandNestedInput
+  activities?: Prisma.ActivityLogUpdateManyWithoutErrandNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutErrandNestedInput
 }
 
 export type ErrandUncheckedUpdateWithoutExpensesInput = {
@@ -591,9 +1001,15 @@ export type ErrandUncheckedUpdateWithoutExpensesInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountReceived?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.NullableEnumErrandStatusFieldUpdateOperationsInput | $Enums.ErrandStatus | null
+  isArchived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.ErrandNoteUncheckedUpdateManyWithoutErrandNestedInput
+  activities?: Prisma.ActivityLogUncheckedUpdateManyWithoutErrandNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutErrandNestedInput
 }
 
 export type ErrandCreateManyUserInput = {
@@ -601,6 +1017,9 @@ export type ErrandCreateManyUserInput = {
   title: string
   description?: string | null
   amountReceived: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.ErrandStatus | null
+  isArchived?: boolean | null
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -610,9 +1029,15 @@ export type ErrandUpdateWithoutUserInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountReceived?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.NullableEnumErrandStatusFieldUpdateOperationsInput | $Enums.ErrandStatus | null
+  isArchived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expenses?: Prisma.ExpenseUpdateManyWithoutErrandNestedInput
+  notes?: Prisma.ErrandNoteUpdateManyWithoutErrandNestedInput
+  activities?: Prisma.ActivityLogUpdateManyWithoutErrandNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutErrandNestedInput
 }
 
 export type ErrandUncheckedUpdateWithoutUserInput = {
@@ -620,9 +1045,15 @@ export type ErrandUncheckedUpdateWithoutUserInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountReceived?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.NullableEnumErrandStatusFieldUpdateOperationsInput | $Enums.ErrandStatus | null
+  isArchived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expenses?: Prisma.ExpenseUncheckedUpdateManyWithoutErrandNestedInput
+  notes?: Prisma.ErrandNoteUncheckedUpdateManyWithoutErrandNestedInput
+  activities?: Prisma.ActivityLogUncheckedUpdateManyWithoutErrandNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutErrandNestedInput
 }
 
 export type ErrandUncheckedUpdateManyWithoutUserInput = {
@@ -630,6 +1061,9 @@ export type ErrandUncheckedUpdateManyWithoutUserInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountReceived?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.NullableEnumErrandStatusFieldUpdateOperationsInput | $Enums.ErrandStatus | null
+  isArchived?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -641,10 +1075,16 @@ export type ErrandUncheckedUpdateManyWithoutUserInput = {
 
 export type ErrandCountOutputType = {
   expenses: number
+  notes: number
+  activities: number
+  attachments: number
 }
 
 export type ErrandCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   expenses?: boolean | ErrandCountOutputTypeCountExpensesArgs
+  notes?: boolean | ErrandCountOutputTypeCountNotesArgs
+  activities?: boolean | ErrandCountOutputTypeCountActivitiesArgs
+  attachments?: boolean | ErrandCountOutputTypeCountAttachmentsArgs
 }
 
 /**
@@ -664,17 +1104,44 @@ export type ErrandCountOutputTypeCountExpensesArgs<ExtArgs extends runtime.Types
   where?: Prisma.ExpenseWhereInput
 }
 
+/**
+ * ErrandCountOutputType without action
+ */
+export type ErrandCountOutputTypeCountNotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ErrandNoteWhereInput
+}
+
+/**
+ * ErrandCountOutputType without action
+ */
+export type ErrandCountOutputTypeCountActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ActivityLogWhereInput
+}
+
+/**
+ * ErrandCountOutputType without action
+ */
+export type ErrandCountOutputTypeCountAttachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttachmentWhereInput
+}
+
 
 export type ErrandSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
   description?: boolean
   amountReceived?: boolean
+  status?: boolean
+  isArchived?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   expenses?: boolean | Prisma.Errand$expensesArgs<ExtArgs>
+  notes?: boolean | Prisma.Errand$notesArgs<ExtArgs>
+  activities?: boolean | Prisma.Errand$activitiesArgs<ExtArgs>
+  attachments?: boolean | Prisma.Errand$attachmentsArgs<ExtArgs>
   _count?: boolean | Prisma.ErrandCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["errand"]>
 
@@ -683,6 +1150,9 @@ export type ErrandSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   title?: boolean
   description?: boolean
   amountReceived?: boolean
+  status?: boolean
+  isArchived?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   userId?: boolean
@@ -694,6 +1164,9 @@ export type ErrandSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   title?: boolean
   description?: boolean
   amountReceived?: boolean
+  status?: boolean
+  isArchived?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   userId?: boolean
@@ -705,15 +1178,21 @@ export type ErrandSelectScalar = {
   title?: boolean
   description?: boolean
   amountReceived?: boolean
+  status?: boolean
+  isArchived?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   userId?: boolean
 }
 
-export type ErrandOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "amountReceived" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["errand"]>
+export type ErrandOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "amountReceived" | "status" | "isArchived" | "deletedAt" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["errand"]>
 export type ErrandInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   expenses?: boolean | Prisma.Errand$expensesArgs<ExtArgs>
+  notes?: boolean | Prisma.Errand$notesArgs<ExtArgs>
+  activities?: boolean | Prisma.Errand$activitiesArgs<ExtArgs>
+  attachments?: boolean | Prisma.Errand$attachmentsArgs<ExtArgs>
   _count?: boolean | Prisma.ErrandCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ErrandIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -728,12 +1207,18 @@ export type $ErrandPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     expenses: Prisma.$ExpensePayload<ExtArgs>[]
+    notes: Prisma.$ErrandNotePayload<ExtArgs>[]
+    activities: Prisma.$ActivityLogPayload<ExtArgs>[]
+    attachments: Prisma.$AttachmentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     title: string
     description: string | null
     amountReceived: runtime.Decimal
+    status: $Enums.ErrandStatus | null
+    isArchived: boolean | null
+    deletedAt: Date | null
     createdAt: Date
     updatedAt: Date
     userId: string
@@ -1133,6 +1618,9 @@ export interface Prisma__ErrandClient<T, Null = never, ExtArgs extends runtime.T
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   expenses<T extends Prisma.Errand$expensesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Errand$expensesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notes<T extends Prisma.Errand$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Errand$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ErrandNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  activities<T extends Prisma.Errand$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Errand$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  attachments<T extends Prisma.Errand$attachmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Errand$attachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1166,6 +1654,9 @@ export interface ErrandFieldRefs {
   readonly title: Prisma.FieldRef<"Errand", 'String'>
   readonly description: Prisma.FieldRef<"Errand", 'String'>
   readonly amountReceived: Prisma.FieldRef<"Errand", 'Decimal'>
+  readonly status: Prisma.FieldRef<"Errand", 'ErrandStatus'>
+  readonly isArchived: Prisma.FieldRef<"Errand", 'Boolean'>
+  readonly deletedAt: Prisma.FieldRef<"Errand", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Errand", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Errand", 'DateTime'>
   readonly userId: Prisma.FieldRef<"Errand", 'String'>
@@ -1591,6 +2082,78 @@ export type Errand$expensesArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.ExpenseScalarFieldEnum | Prisma.ExpenseScalarFieldEnum[]
+}
+
+/**
+ * Errand.notes
+ */
+export type Errand$notesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ErrandNote
+   */
+  select?: Prisma.ErrandNoteSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ErrandNote
+   */
+  omit?: Prisma.ErrandNoteOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ErrandNoteInclude<ExtArgs> | null
+  where?: Prisma.ErrandNoteWhereInput
+  orderBy?: Prisma.ErrandNoteOrderByWithRelationInput | Prisma.ErrandNoteOrderByWithRelationInput[]
+  cursor?: Prisma.ErrandNoteWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ErrandNoteScalarFieldEnum | Prisma.ErrandNoteScalarFieldEnum[]
+}
+
+/**
+ * Errand.activities
+ */
+export type Errand$activitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ActivityLog
+   */
+  select?: Prisma.ActivityLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ActivityLog
+   */
+  omit?: Prisma.ActivityLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ActivityLogInclude<ExtArgs> | null
+  where?: Prisma.ActivityLogWhereInput
+  orderBy?: Prisma.ActivityLogOrderByWithRelationInput | Prisma.ActivityLogOrderByWithRelationInput[]
+  cursor?: Prisma.ActivityLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ActivityLogScalarFieldEnum | Prisma.ActivityLogScalarFieldEnum[]
+}
+
+/**
+ * Errand.attachments
+ */
+export type Errand$attachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Attachment
+   */
+  select?: Prisma.AttachmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Attachment
+   */
+  omit?: Prisma.AttachmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AttachmentInclude<ExtArgs> | null
+  where?: Prisma.AttachmentWhereInput
+  orderBy?: Prisma.AttachmentOrderByWithRelationInput | Prisma.AttachmentOrderByWithRelationInput[]
+  cursor?: Prisma.AttachmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AttachmentScalarFieldEnum | Prisma.AttachmentScalarFieldEnum[]
 }
 
 /**

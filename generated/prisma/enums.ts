@@ -19,3 +19,24 @@ export const ExpenseCategory = {
 } as const
 
 export type ExpenseCategory = (typeof ExpenseCategory)[keyof typeof ExpenseCategory]
+
+
+export const ErrandStatus = {
+  ACTIVE: 'ACTIVE',
+  COMPLETED: 'COMPLETED'
+} as const
+
+export type ErrandStatus = (typeof ErrandStatus)[keyof typeof ErrandStatus]
+
+
+export const ActivityLogType = {
+  SYSTEM: 'SYSTEM',
+  CREATE_EXPENSE: 'CREATE_EXPENSE',
+  EDIT_EXPENSE: 'EDIT_EXPENSE',
+  DELETE_EXPENSE: 'DELETE_EXPENSE',
+  ADD_NOTE: 'ADD_NOTE',
+  DELETE_NOTE: 'DELETE_NOTE',
+  COMPLETED: 'COMPLETED'
+} as const
+
+export type ActivityLogType = (typeof ActivityLogType)[keyof typeof ActivityLogType]

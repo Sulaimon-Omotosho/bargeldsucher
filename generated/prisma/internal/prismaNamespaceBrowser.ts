@@ -57,6 +57,9 @@ export const ModelName = {
   VerificationToken: 'VerificationToken',
   PasswordResetToken: 'PasswordResetToken',
   Errand: 'Errand',
+  ErrandNote: 'ErrandNote',
+  ActivityLog: 'ActivityLog',
+  Attachment: 'Attachment',
   Expense: 'Expense'
 } as const
 
@@ -144,12 +147,50 @@ export const ErrandScalarFieldEnum = {
   title: 'title',
   description: 'description',
   amountReceived: 'amountReceived',
+  status: 'status',
+  isArchived: 'isArchived',
+  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId'
 } as const
 
 export type ErrandScalarFieldEnum = (typeof ErrandScalarFieldEnum)[keyof typeof ErrandScalarFieldEnum]
+
+
+export const ErrandNoteScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  errandId: 'errandId'
+} as const
+
+export type ErrandNoteScalarFieldEnum = (typeof ErrandNoteScalarFieldEnum)[keyof typeof ErrandNoteScalarFieldEnum]
+
+
+export const ActivityLogScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  meta: 'meta',
+  createdAt: 'createdAt',
+  errandId: 'errandId'
+} as const
+
+export type ActivityLogScalarFieldEnum = (typeof ActivityLogScalarFieldEnum)[keyof typeof ActivityLogScalarFieldEnum]
+
+
+export const AttachmentScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  url: 'url',
+  size: 'size',
+  createdAt: 'createdAt',
+  errandId: 'errandId'
+} as const
+
+export type AttachmentScalarFieldEnum = (typeof AttachmentScalarFieldEnum)[keyof typeof AttachmentScalarFieldEnum]
 
 
 export const ExpenseScalarFieldEnum = {

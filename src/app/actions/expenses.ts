@@ -75,20 +75,36 @@ export async function createExpenseAction(data: CreateExpenseInput) {
     throw new Error('Unauthorized')
   }
 
-  const expense = await prisma.expense.create({
-    data: {
-      description: data.description,
-      amount: data.amount,
-      category: data.category,
-      vendor: data.vendor || null,
-      receiptUrl: data.receiptUrl || null,
-      expenseDate: new Date(data.expenseDate),
-      errandId: data.errandId,
-    },
+  // Wrap inside a transaction to ensure both records are created together
+  const savedExpense = await prisma.$transaction(async (tx) => {
+    // 1. Create the raw expense row
+    const expense = await tx.expense.create({
+      data: {
+        description: data.description,
+        amount: data.amount,
+        category: data.category,
+        vendor: data.vendor || null,
+        receiptUrl: data.receiptUrl || null,
+        expenseDate: new Date(data.expenseDate),
+        errandId: data.errandId,
+      },
+    })
+
+    // 2. Automatically write the history item to the activityLog
+    await tx.activityLog.create({
+      data: {
+        errandId: data.errandId,
+        type: 'SYSTEM', // Using SYSTEM to align with your database enum values safely
+        title: `Added ${data.description}`,
+        meta: `- ₦${Number(data.amount).toLocaleString()}`,
+      },
+    })
+
+    return expense
   })
 
   return {
-    ...expense,
-    amount: Number(expense.amount),
+    ...savedExpense,
+    amount: Number(savedExpense.amount),
   }
 }
