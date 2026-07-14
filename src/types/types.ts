@@ -28,6 +28,8 @@ export type Errand = Omit<ErrandModel, 'amountReceived' | 'expenses'> & {
 
 export type Expense = Omit<ExpenseModel, 'amount' | 'errand'> & {
   amount: number
+  notes?: string | null
+  receiptUrl?: string | null
   errand: Omit<ExpenseModel['errand'], 'amountReceived'> & {
     amountReceived: number
   }

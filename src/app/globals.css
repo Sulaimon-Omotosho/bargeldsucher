@@ -127,6 +127,26 @@
   html {
     @apply font-sans;
   }
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --chart-1: 142.1 76.2% 36.3%; /* Emerald / Green */
+    --chart-2: 38 92% 50%; /* Amber / Yellow */
+    --chart-3: 217.2 91.2% 59.8%; /* Blue */
+    --chart-4: 262.1 83.3% 57.8%; /* Purple */
+    --chart-5: 335.2 84.4% 65.1%; /* Pink */
+    --chart-6: 215.4 16.3% 46.9%; /* Slate Gray */
+  }
+
+  .dark {
+    --chart-1: 142.1 70.6% 45.3%;
+    --chart-2: 48 96% 89%;
+    --chart-3: 217.2 91.2% 59.8%;
+    --chart-4: 263.4 70% 50.4%;
+    --chart-5: 336.3 78% 62.8%;
+    --chart-6: 215.4 16.3% 56.9%;
+  }
 }
 
 @layer utilities {

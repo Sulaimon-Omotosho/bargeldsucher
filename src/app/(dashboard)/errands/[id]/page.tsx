@@ -3,7 +3,7 @@
 import { notFound, useParams } from 'next/navigation'
 import { useErrand } from '@/hooks/useErrands'
 import ErrandDetailSkeleton from '@/components/skeletons/ErrandDetailSkeleton'
-import CreateExpense from '@/components/dashboard/CreateExpense'
+// import CreateExpense from '@/components/dashboard/CreateExpense'
 
 // Import Project-focused Sub-modules
 import ErrandDetailHeader from '@/components/errand-detail/ErrandDetailHeader'
@@ -14,6 +14,7 @@ import ErrandProjectTabs from '@/components/errand-detail/ErrandProjectTabs'
 import ErrandStickySummary from '@/components/errand-detail/ErrandStickySummary'
 import ErrandVendorBreakdown from '@/components/errand-detail/ErrandVendorBreakDown'
 import FinalizedErrandBanner from '@/components/errand-detail/FinalizedErrandBanner'
+import CreateExpense from '@/components/expenses/CreateExpenses'
 
 export default function ErrandDetailPage() {
   const { id } = useParams<{ id: string }>()

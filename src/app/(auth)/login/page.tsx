@@ -252,7 +252,7 @@ export default function AuthPage() {
           </div>
           <Link
             href='/forgot-password'
-            className='hover:underline hover:text-amber-700 text-amber-500 transition-all duration-300'
+            className='hover:underline hover:text-amber-700 text-amber-500 transition-all duration-300 w-fit'
           >
             Forgotten Password
           </Link>

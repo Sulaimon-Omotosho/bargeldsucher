@@ -1,6 +1,6 @@
 'use client'
 
-import CreateExpense from '@/components/dashboard/CreateExpense'
+import CreateExpense from '../expenses/CreateExpenses'
 
 interface ErrandStickySummaryProps {
   id: string

@@ -2,7 +2,7 @@
 
 import { getDashboardDataAction } from '@/app/actions/dashboard'
 import CashHealthScore from '@/components/dashboard/CashHealthScore'
-import CreateExpense from '@/components/dashboard/CreateExpense'
+// import CreateExpense from '@/components/dashboard/CreateExpense'
 import DashboardGreeting from '@/components/dashboard/DashboardGreeting'
 import DashboardHeader from '@/components/dashboard/DashboardHeader'
 import MonthlyBudgetProgress from '@/components/dashboard/MonthlyBudgetProgress'
@@ -15,6 +15,7 @@ import SystemInsights from '@/components/dashboard/SystemInsights'
 import TodaySnapshot from '@/components/dashboard/TodaySnapshot'
 import TopCategoryCard from '@/components/dashboard/TopCategoryCard'
 import UpcomingSpending from '@/components/dashboard/UpcomingSpending'
+import CreateExpense from '@/components/expenses/CreateExpenses'
 import DashboardSkeleton from '@/components/skeletons/DashboardSkeleton'
 import {
   useDashboardData,
@@ -119,12 +120,10 @@ export default function DashboardPage() {
 
         {/* Right Section: Dual-Stack High-Density Analytics */}
         <div className='lg:col-span-1 '>
-          {/* <div className='lg:col-span-1 flex flex-col gap-6'> */}
           <SpendingBreakdown
             breakdownData={data?.breakdown}
             isLoading={isLoading}
           />
-          {/* <SpendingTrend trendData={data?.trend} isLoading={isLoading} /> */}
         </div>
       </div>
       <div className='w-full pt-2'>

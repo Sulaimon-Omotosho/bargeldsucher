@@ -100,3 +100,11 @@ export const ExpenseSchema = z.object({
     ),
   errandId: z.string().min(1, 'Please map this to a valid Errand loop'),
 })
+
+const ExtendedExpenseSchema = ExpenseSchema.extend({
+  overspendExplanation: z.string().optional(),
+}).superRefine((data, ctx) => {
+  // We can pass current status checks here
+  // But to keep it bulletproof, we will manually run setError in React Hook Form on submit,
+  // which is much cleaner for dynamic external database states.
+})
