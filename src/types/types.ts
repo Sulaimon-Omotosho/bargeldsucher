@@ -51,3 +51,25 @@ export interface CreateExpenseInput {
   expenseDate: string
   errandId: string
 }
+
+export interface SettingsData {
+  // user: User
+  name: string
+  email: string
+  isEmailVerified: boolean
+  memberSince: string
+  lastLogin: string
+  completionPercentage: number
+  stats: {
+    errands: number
+    expenses: number
+    funding: number
+    accountAgeDays: number
+  }
+  securityChecks: {
+    emailVerified: boolean
+    strongPassword: boolean
+    recoveryEmail: boolean
+    activeSessionProtected: boolean
+  }
+}
