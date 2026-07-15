@@ -2,8 +2,6 @@
 
 import { signOut } from 'next-auth/react'
 import { LogOut, User as UserIcon, Loader2 } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
-import { getDashboardDataAction } from '@/app/actions/dashboard'
 import { useSession } from 'next-auth/react'
 
 export default function UserDropdown() {
@@ -15,18 +13,6 @@ export default function UserDropdown() {
   const displayName = session?.user?.name ?? 'User'
   const displayEmail = session?.user?.email ?? ''
   const userImage = session?.user?.image
-  // const { data, isLoading } = useQuery({
-  //   queryKey: ['dashboard'],
-  //   queryFn: getDashboardDataAction,
-  // })
-
-  // const dbUser = data?.userProfile
-
-  // const displayName =
-  //   dbUser?.name ||
-  //   [dbUser?.firstName, dbUser?.lastName].filter(Boolean).join(' ')
-
-  // const displayEmail = dbUser?.email ?? ''
 
   const userInitial =
     displayName?.[0]?.toUpperCase() ?? displayEmail?.[0]?.toUpperCase() ?? 'U'

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
+import { redis } from '@/lib/redis'
+import { NotificationType } from '../../../../../generated/prisma/enums'
 
 export async function GET(
   req: Request,
@@ -21,7 +23,11 @@ export async function GET(
         activities: {
           orderBy: { createdAt: 'desc' },
         },
-        notes: true,
+        notes: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
       },
     })
 
@@ -63,6 +69,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const userId = session.user.id
     const { id } = await params
     const body = await req.json()
     const { title, description } = body
@@ -75,16 +82,20 @@ export async function PATCH(
     }
 
     const updatedErrand = await prisma.$transaction(async (tx) => {
-      // 1. Capture old details for dynamic audit comparison strings
       const oldErrand = await tx.errand.findUnique({
-        where: { id, userId: session.user.id },
+        where: { id, userId: userId },
       })
 
-      // 2. Perform main meta update operations
+      if (!oldErrand)
+        throw {
+          status: 404,
+          message: 'Errand not found',
+        }
+
       const updated = await tx.errand.update({
         where: {
           id,
-          userId: session.user.id,
+          userId: userId,
         },
         data: {
           title: title.trim(),
@@ -92,7 +103,6 @@ export async function PATCH(
         },
       })
 
-      // 3. Document the modification on the activity stream
       const titleChanged = oldErrand?.title !== title.trim()
       await tx.activityLog.create({
         data: {
@@ -101,12 +111,38 @@ export async function PATCH(
           title: titleChanged
             ? `Renamed errand to "${title.trim()}"`
             : 'Updated errand core description details',
-          meta:
-            titleChanged && oldErrand
-              ? `Previous: "${oldErrand.title}"`
-              : 'Metadata configuration updated via management panel.',
+          meta: titleChanged
+            ? `Previous: "${oldErrand.title}"`
+            : 'Metadata configuration updated via management panel.',
         },
       })
+
+      const notificationTitle = 'Errand Updated '
+      const notificationMessage = titleChanged
+        ? `Errand "${oldErrand.title}" was renamed to "${title.trim()}".`
+        : `Details updated for errand "${title.trim()}".`
+
+      await tx.notification.create({
+        data: {
+          userId,
+          type: NotificationType.ERRAND_STATUS,
+          title: notificationTitle,
+          message: notificationMessage,
+          actionLabel: 'View Errand',
+          actionRoute: `/errands/${id}`,
+          isRead: false,
+        },
+      })
+
+      await redis.publish(
+        `user:${userId}:notifications`,
+        JSON.stringify({
+          title: notificationTitle,
+          message: notificationMessage,
+          type: NotificationType.ERRAND_STATUS,
+          actionRoute: `/errands/${id}`,
+        }),
+      )
 
       return updated
     })
@@ -131,10 +167,16 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const userId = session.user.id
     const { id } = await params
 
     await prisma.$transaction(async (tx) => {
-      // 1. Create audit record pointing out that this item was explicitly thrown to archives
+      const errand = await tx.errand.findUnique({
+        where: { id, userId: userId },
+      })
+
+      if (!errand) throw { status: 404, message: 'Errand not found' }
+
       await tx.activityLog.create({
         data: {
           errandId: id,
@@ -144,7 +186,6 @@ export async function DELETE(
         },
       })
 
-      // 2. Perform standard soft-deletion archive script
       await tx.errand.update({
         where: {
           id,
@@ -155,6 +196,27 @@ export async function DELETE(
           deletedAt: new Date(),
         },
       })
+      await tx.notification.create({
+        data: {
+          userId,
+          type: NotificationType.ERRAND_STATUS,
+          title: 'Errand Archived 📁',
+          message: `Errand "${errand.title}" has been moved into your archives.`,
+          actionLabel: 'Go to Dashboard',
+          actionRoute: '/dashboard',
+          isRead: false,
+        },
+      })
+
+      await redis.publish(
+        `user:${userId}:notifications`,
+        JSON.stringify({
+          title: 'Errand Archived 📁',
+          message: `Errand "${errand.title}" has been moved into your archives.`,
+          type: NotificationType.ERRAND_STATUS,
+          actionRoute: '/dashboard',
+        }),
+      )
     })
 
     return NextResponse.json({

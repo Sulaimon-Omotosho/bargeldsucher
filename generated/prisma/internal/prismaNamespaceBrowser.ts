@@ -60,7 +60,8 @@ export const ModelName = {
   ErrandNote: 'ErrandNote',
   ActivityLog: 'ActivityLog',
   Attachment: 'Attachment',
-  Expense: 'Expense'
+  Expense: 'Expense',
+  Notification: 'Notification'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -207,6 +208,23 @@ export const ExpenseScalarFieldEnum = {
 } as const
 
 export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeof ExpenseScalarFieldEnum]
+
+
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  title: 'title',
+  message: 'message',
+  isRead: 'isRead',
+  readAt: 'readAt',
+  actionLabel: 'actionLabel',
+  actionRoute: 'actionRoute',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
 export const SortOrder = {

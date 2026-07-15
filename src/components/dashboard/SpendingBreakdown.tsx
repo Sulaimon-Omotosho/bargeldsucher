@@ -29,12 +29,12 @@ interface SpendingBreakdownProps {
 // 1. These keys generate localized variables: var(--color-food), var(--color-transport), etc.
 const chartConfig = {
   amount: { label: 'Total Spent' },
-  food: { label: 'Food', color: 'hsl(var(--chart-1))' },
-  transport: { label: 'Transport', color: 'hsl(var(--chart-2))' },
-  office: { label: 'Office', color: 'hsl(var(--chart-3))' },
-  utilities: { label: 'Utilities', color: 'hsl(var(--chart-4))' },
-  shopping: { label: 'Shopping', color: 'hsl(var(--chart-5))' },
-  other: { label: 'Other', color: 'hsl(var(--chart-6))' },
+  food: { label: 'Food', color: 'var(--chart-1)' },
+  transport: { label: 'Transport', color: 'var(--chart-2)' },
+  office: { label: 'Office', color: 'var(--chart-3)' },
+  utilities: { label: 'Utilities', color: 'var(--chart-4)' },
+  shopping: { label: 'Shopping', color: 'var(--chart-5)' },
+  other: { label: 'Other', color: 'var(--chart-6)' },
 }
 
 type ConfigKeys = Exclude<keyof typeof chartConfig, 'amount'>

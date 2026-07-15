@@ -40,3 +40,12 @@ export const ActivityLogType = {
 } as const
 
 export type ActivityLogType = (typeof ActivityLogType)[keyof typeof ActivityLogType]
+
+
+export const NotificationType = {
+  CASH_ALERT: 'CASH_ALERT',
+  ERRAND_STATUS: 'ERRAND_STATUS',
+  SYSTEM_SECURITY: 'SYSTEM_SECURITY'
+} as const
+
+export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]

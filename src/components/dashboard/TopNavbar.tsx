@@ -3,18 +3,20 @@
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import UserDropdown from './UserDropdown'
-// import Sidebar from './Sidebar'
-import { Bell, Menu, Loader2, AlertCircle } from 'lucide-react'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Loader2, AlertCircle } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { getDashboardDataAction } from '@/app/actions/dashboard'
 import { SidebarTrigger } from '../ui/sidebar'
+import NotificationDropdown from '../shared/NotificationDropdown'
+import { useSession } from 'next-auth/react'
 
 export default function TopNavbar() {
+  const { data: session } = useSession()
   const pathname = usePathname()
   const [mounted, setMounted] = useState(false)
   const currentRouteName = pathname.split('/')[1] || 'Dashboard'
 
+  const currentUserId = session?.user?.id
   // Hydration protection block
   useEffect(() => {
     setMounted(true)
@@ -24,7 +26,7 @@ export default function TopNavbar() {
   const { data, isLoading } = useQuery({
     queryKey: ['dashboard'],
     queryFn: getDashboardDataAction,
-    enabled: mounted, // Only fetch once hydration completes securely
+    enabled: mounted,
   })
 
   // Safe variable fallbacks for dynamic badge evaluations
@@ -41,24 +43,6 @@ export default function TopNavbar() {
       <SidebarTrigger />
       {/* Left side: Mobile Menu Trigger + Route Dynamic Headers */}
       <div className='flex items-center gap-3'>
-        {/* <div className='md:hidden'>
-          <Sheet>
-            <SheetTrigger
-              className='rounded-xl p-2 text-slate-500 hover:bg-slate-100/80 hover:text-slate-900 transition-all focus:outline-none'
-              aria-label='Open navigation menu'
-            >
-              <Menu className='h-5 w-5' />
-            </SheetTrigger>
-
-            <SheetContent
-              side='left'
-              className='p-0 w-64 border-r-0 shadow-2xl'
-            >
-              <Sidebar isMobile={true} />
-            </SheetContent>
-          </Sheet>
-        </div> */}
-
         <div className='flex items-center gap-2'>
           <h2 className='text-md md:text-lg font-bold tracking-tight text-slate-900 capitalize'>
             {currentRouteName}
@@ -80,25 +64,8 @@ export default function TopNavbar() {
       {/* Right side: Dynamic Actions & Active Profiles */}
       <div className='flex items-center gap-3.5'>
         {/* Real-time Notification Center Hub */}
-        <button
-          type='button'
-          className='group relative rounded-xl p-2 text-slate-400 hover:bg-slate-100/80 hover:text-slate-700 transition-all focus:outline-none'
-          title={
-            pendingNotificationCount > 0
-              ? `${pendingNotificationCount} actions pending`
-              : 'No unread logs'
-          }
-        >
-          <Bell className='h-5 w-5 transition-transform group-hover:rotate-12 duration-200' />
 
-          {/* Condition-controlled alert badge triggered by live db tracking states */}
-          {pendingNotificationCount > 0 && (
-            <span className='absolute top-1.5 right-1.5 flex h-2 w-2'>
-              <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75' />
-              <span className='relative inline-flex rounded-full h-2 w-2 bg-rose-500' />
-            </span>
-          )}
-        </button>
+        <NotificationDropdown userId={currentUserId} />
 
         <div className='h-4 w-px bg-slate-200' />
 
@@ -110,3 +77,23 @@ export default function TopNavbar() {
     </header>
   )
 }
+
+// ;<button
+//   type='button'
+//   className='group relative rounded-xl p-2 text-slate-400 hover:bg-slate-100/80 hover:text-slate-700 transition-all focus:outline-none'
+//   title={
+//     pendingNotificationCount > 0
+//       ? `${pendingNotificationCount} actions pending`
+//       : 'No unread logs'
+//   }
+// >
+//   <Bell className='h-5 w-5 transition-transform group-hover:rotate-12 duration-200' />
+
+//   {/* Condition-controlled alert badge triggered by live db tracking states */}
+//   {pendingNotificationCount > 0 && (
+//     <span className='absolute top-1.5 right-1.5 flex h-2 w-2'>
+//       <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75' />
+//       <span className='relative inline-flex rounded-full h-2 w-2 bg-rose-500' />
+//     </span>
+//   )}
+// </button>

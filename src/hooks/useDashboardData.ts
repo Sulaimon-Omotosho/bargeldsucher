@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 
 export function useDashboardData() {
   return useQuery({
-    queryKey: ['dashboard-master-data'],
+    queryKey: ['dashboard', 'master-data'],
     queryFn: async () => {
       const res = await fetch('/api/dashboard')
       if (!res.ok) {
@@ -20,7 +20,7 @@ export function useDashboardData() {
 
 export function useTodaySnapshot() {
   return useQuery<TodaySnapshotData>({
-    queryKey: ['dashboard-today-snapshot'],
+    queryKey: ['dashboard', 'today-snapshot'],
     queryFn: async () => {
       const res = await fetch('/api/dashboard/today')
       if (!res.ok) throw new Error('Failed to stream daily metrics')
@@ -32,7 +32,7 @@ export function useTodaySnapshot() {
 
 export function useInsightsMetrics() {
   return useQuery<InsightsMetricsData>({
-    queryKey: ['dashboard-health-upcoming'],
+    queryKey: ['dashboard', 'health-upcoming'],
     queryFn: async () => {
       const res = await fetch('/api/dashboard/insights')
       if (!res.ok) throw new Error('Failed to stream analytical insights')

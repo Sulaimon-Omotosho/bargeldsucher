@@ -1,5 +1,5 @@
 import { ExpenseCategory } from '../../generated/prisma/enums'
-import { ActivityLog, Prisma } from '../../generated/prisma/client'
+import { ActivityLog, ErrandNote, Prisma } from '../../generated/prisma/client'
 
 type ErrandModel = Prisma.ErrandGetPayload<{
   include: {
@@ -24,6 +24,8 @@ export type Errand = Omit<ErrandModel, 'amountReceived' | 'expenses'> & {
   amountReceived: number
   activities: ActivityLog[]
   expenses: SerializedExpense[]
+  notes: ErrandNote[]
+  content: string
 }
 
 export type Expense = Omit<ExpenseModel, 'amount' | 'errand'> & {

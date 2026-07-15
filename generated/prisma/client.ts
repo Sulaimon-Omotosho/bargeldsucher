@@ -91,3 +91,8 @@ export type Attachment = Prisma.AttachmentModel
  * 
  */
 export type Expense = Prisma.ExpenseModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel

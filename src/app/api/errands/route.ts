@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
+import { redis } from '@/lib/redis'
+import { NotificationType } from '../../../../generated/prisma/enums'
 
 export async function GET() {
   try {
@@ -65,6 +67,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const userId = session.user.id
     const body = await req.json()
     const { title, description, amountReceived } = body
 
@@ -76,13 +79,12 @@ export async function POST(req: Request) {
     }
 
     const savedErrand = await prisma.$transaction(async (tx) => {
-      // 1. Initialize the Errand Instance
       const errand = await tx.errand.create({
         data: {
           title: title.trim(),
           description: description?.trim(),
           amountReceived: Number(amountReceived),
-          userId: session.user.id,
+          userId: userId,
         },
       })
 
@@ -94,6 +96,28 @@ export async function POST(req: Request) {
           meta: `Initial authorization float set at ₦${Number(amountReceived).toLocaleString()}`,
         },
       })
+
+      await tx.notification.create({
+        data: {
+          userId,
+          type: NotificationType.ERRAND_STATUS, // Uses the strict enum
+          title: 'New Errand Created 🚀',
+          message: `Errand "${errand.title}" with a budget of ₦${Number(amountReceived).toLocaleString()} has been added.`,
+          actionLabel: 'View Errand',
+          actionRoute: `/errands/${errand.id}`,
+          isRead: false,
+        },
+      })
+
+      await redis.publish(
+        `user:${userId}:notifications`,
+        JSON.stringify({
+          title: 'New Errand Created 🚀',
+          message: `Errand "${errand.title}" with a budget of ₦${Number(amountReceived).toLocaleString()} has been added.`,
+          type: NotificationType.ERRAND_STATUS,
+          actionRoute: `/errands/${errand.id}`,
+        }),
+      )
 
       return errand
     })

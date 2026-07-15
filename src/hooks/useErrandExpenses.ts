@@ -33,6 +33,7 @@ export function useErrandExpenses(errandId: string) {
       queryClient.invalidateQueries({
         queryKey: ['errand', errandId],
       })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
     },
   })
 

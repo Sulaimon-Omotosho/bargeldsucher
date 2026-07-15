@@ -2,6 +2,8 @@ import { auth } from '@/auth'
 import { AppSidebar } from '@/components/dashboard/AppSidebar'
 import TopNavbar from '@/components/dashboard/TopNavbar'
 import { SidebarProvider } from '@/components/ui/sidebar'
+import { useNotifications } from '@/hooks/useNotifications'
+import NotificationBridge from '@/providers/NotificationBridge'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 
@@ -11,10 +13,13 @@ export default async function DashboardLayout({
   children: React.ReactNode
 }) {
   const session = await auth()
-
   if (!session) {
     redirect('/login')
   }
+
+  const currentUserId = session.user.id
+
+  // useNotifications(currentUserId)
 
   return (
     <SidebarProvider>
@@ -26,6 +31,7 @@ export default async function DashboardLayout({
         {/* Main App Display Window - Right */}
         <div className='relative flex flex-1 flex-col overflow-hidden'>
           <TopNavbar />
+          <NotificationBridge userId={currentUserId} />
 
           {/* Route Pages Content Area */}
           <main className='flex-1 overflow-y-auto p-6 md:p-8 bg-slate-50'>

@@ -1,9 +1,6 @@
 'use client'
 
-import { getDashboardDataAction } from '@/app/actions/dashboard'
 import CashHealthScore from '@/components/dashboard/CashHealthScore'
-// import CreateExpense from '@/components/dashboard/CreateExpense'
-import DashboardGreeting from '@/components/dashboard/DashboardGreeting'
 import DashboardHeader from '@/components/dashboard/DashboardHeader'
 import MonthlyBudgetProgress from '@/components/dashboard/MonthlyBudgetProgress'
 import MonthlySnapshot from '@/components/dashboard/MonthlySnapshot'
@@ -11,7 +8,6 @@ import RecentErrands from '@/components/dashboard/RecentErrands'
 import SavingsOpportunityCard from '@/components/dashboard/SavingsOpportunityCard'
 import SpendingBreakdown from '@/components/dashboard/SpendingBreakdown'
 import SpendingTrend from '@/components/dashboard/SpendingTrend'
-import SystemInsights from '@/components/dashboard/SystemInsights'
 import TodaySnapshot from '@/components/dashboard/TodaySnapshot'
 import TopCategoryCard from '@/components/dashboard/TopCategoryCard'
 import UpcomingSpending from '@/components/dashboard/UpcomingSpending'
@@ -22,8 +18,6 @@ import {
   useInsightsMetrics,
   useTodaySnapshot,
 } from '@/hooks/useDashboardData'
-import { TodaySnapshotData } from '@/types/dashboard'
-import { useQuery } from '@tanstack/react-query'
 import { AlertCircle } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 

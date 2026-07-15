@@ -67,6 +67,8 @@ export function useCreateExpense(errandId?: string) {
       }
       queryClient.invalidateQueries({ queryKey: ['expenses'] })
       queryClient.invalidateQueries({ queryKey: ['selectable-errands'] })
+      queryClient.invalidateQueries({ queryKey: ['notifications'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
     },
   })
 }

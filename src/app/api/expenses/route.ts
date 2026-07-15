@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
+import { redis } from '@/lib/redis'
+import { NotificationType } from '../../../../generated/prisma/enums'
 
 export async function POST(req: Request) {
   try {
@@ -9,6 +11,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const userId = session.user.id
     const data = await req.json()
     const {
       description,
@@ -33,7 +36,7 @@ export async function POST(req: Request) {
 
     const result = await prisma.$transaction(async (tx) => {
       const errand = await tx.errand.findUnique({
-        where: { id: errandId, userId: session.user.id },
+        where: { id: errandId, userId: userId },
         include: { expenses: true },
       })
 
@@ -60,7 +63,6 @@ export async function POST(req: Request) {
         }
       }
 
-      // Check for justification
       const isOverspending = overspendPercent > 0
       if (isOverspending && !overspendExplanation?.trim()) {
         throw {
@@ -80,6 +82,17 @@ export async function POST(req: Request) {
           errandId,
         },
       })
+
+      let shouldNotify = false
+      let notificationPayload: {
+        title: string
+        message: string
+        type: NotificationType
+      } = {
+        title: '',
+        message: '',
+        type: NotificationType.SYSTEM_SECURITY,
+      }
 
       if (isOverspending && overspendExplanation) {
         const justification = overspendExplanation.trim()
@@ -102,6 +115,16 @@ export async function POST(req: Request) {
             meta: `Exceeded allocation by ${overspendPercent.toFixed(1)}% | Note: "${justification.substring(0, 45)}..."`,
           },
         })
+
+        // 🔔 Set up Budget Alert Notification
+        shouldNotify = true
+        notificationPayload = {
+          title: isSevere
+            ? 'Severe Budget Overrun! ⚠️'
+            : 'Budget Limit Exceeded 💸',
+          message: `Errand "${errand.title}" has gone over budget by ${overspendPercent.toFixed(1)}%. Reason: ${justification.substring(0, 45)}...`,
+          type: 'CASH_ALERT',
+        }
       } else {
         await tx.activityLog.create({
           data: {
@@ -111,6 +134,39 @@ export async function POST(req: Request) {
             meta: `- ₦${Number(amount).toLocaleString()}`,
           },
         })
+
+        shouldNotify = true
+        notificationPayload = {
+          title: 'New Expense Tracked 📝',
+          message: `₦${Number(amount).toLocaleString()} logged for "${description}" on your errand.`,
+          type: 'ERRAND_STATUS',
+        }
+      }
+
+      if (shouldNotify) {
+        // A. Save to PostgreSQL database for historical records
+        await tx.notification.create({
+          data: {
+            userId,
+            type: notificationPayload.type,
+            title: notificationPayload.title,
+            message: notificationPayload.message,
+            actionLabel: 'View Errand',
+            actionRoute: `/errands/${errandId}`,
+            isRead: false,
+          },
+        })
+
+        // B. Publish real-time event via Redis PubSub
+        await redis.publish(
+          `user:${userId}:notifications`,
+          JSON.stringify({
+            title: notificationPayload.title,
+            message: notificationPayload.message,
+            type: notificationPayload.type,
+            actionRoute: `/errands/${errandId}`,
+          }),
+        )
       }
 
       return expense

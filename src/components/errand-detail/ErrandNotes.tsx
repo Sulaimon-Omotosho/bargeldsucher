@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import { FileText, Plus, Trash2, Loader2 } from 'lucide-react'
 import { useErrand, useErrandNotes } from '@/hooks/useErrands'
-// import { useErrandDetails } from '@/hooks/useErrandDetails'
-// import { useErrandNotes } from '@/hooks/useErrandNotes'
+import { Errand } from '@/types/types'
 
 interface ErrandNotesProps {
   errandId: string
@@ -12,8 +11,6 @@ interface ErrandNotesProps {
 
 export default function ErrandNotes({ errandId }: ErrandNotesProps) {
   const [newNote, setNewNote] = useState('')
-
-  // Fetch real array records directly out of our unified state hook cache pipeline
   const { data: errand, isLoading } = useErrand(errandId)
   const { addNote, isAdding, deleteNote } = useErrandNotes(errandId)
 
@@ -36,7 +33,7 @@ export default function ErrandNotes({ errandId }: ErrandNotesProps) {
   }
 
   // Fallback to empty array if no notes are populated yet
-  const notes = (errand as any)?.notes || []
+  const notes = (errand as Errand)?.notes || []
 
   return (
     <div className='bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm space-y-4'>
@@ -79,7 +76,7 @@ export default function ErrandNotes({ errandId }: ErrandNotesProps) {
             No notes or operational warnings recorded for this errand run loop.
           </p>
         ) : (
-          notes.map((note: any) => (
+          notes.map((note) => (
             <div
               key={note.id}
               className='flex items-start justify-between gap-2 p-2.5 bg-slate-50/60 rounded-xl border border-slate-100 group'

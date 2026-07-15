@@ -24,6 +24,8 @@ export function useUpdateErrand() {
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['errand', variables.id] })
       queryClient.invalidateQueries({ queryKey: ['errands'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['notifications'] })
     },
   })
 }
@@ -57,14 +59,14 @@ async function createErrandRequest(data: {
 
 export function useErrands() {
   return useQuery<ErrandsPayload>({
-    queryKey: ['errands'],
+    queryKey: ['errands', 'dashboard'],
     queryFn: fetchErrands,
   })
 }
 
 export function useErrand(id: string) {
   return useQuery<Errand>({
-    queryKey: ['errand', id],
+    queryKey: ['errands', 'dashboard', 'errand', id],
     queryFn: () => fetchSingleErrand(id),
     enabled: !!id,
   })
@@ -78,6 +80,7 @@ export function useCreateErrand() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['errands'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['notifications'] })
     },
   })
 }
@@ -98,6 +101,8 @@ export function useCompleteErrand(errandId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['errand', errandId] })
       queryClient.invalidateQueries({ queryKey: ['errands'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['notifications'] })
     },
   })
 }
@@ -113,6 +118,8 @@ export function useArchiveErrand() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['errands'] })
+      queryClient.invalidateQueries({ queryKey: ['Notifications'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
     },
   })
 }
@@ -132,7 +139,10 @@ export function useErrandNotes(errandId: string) {
       return res.json()
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['errand', errandId] })
+      queryClient.invalidateQueries({ queryKey: ['errands', errandId] })
+      queryClient.invalidateQueries({
+        queryKey: ['notifications'],
+      })
     },
   })
 
@@ -146,7 +156,10 @@ export function useErrandNotes(errandId: string) {
       return res.json()
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['errand', errandId] })
+      queryClient.invalidateQueries({ queryKey: ['errands', errandId] })
+      queryClient.invalidateQueries({
+        queryKey: ['notifications'],
+      })
     },
   })
 
@@ -154,5 +167,6 @@ export function useErrandNotes(errandId: string) {
     addNote: addNoteMutation.mutate,
     isAdding: addNoteMutation.isPending,
     deleteNote: deleteNoteMutation.mutate,
+    isDeleting: deleteNoteMutation.isPending,
   }
 }
