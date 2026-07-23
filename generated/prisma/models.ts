@@ -9,11 +9,15 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User'
+export type * from './models/UserProfile'
+export type * from './models/Address'
+export type * from './models/UserPreferences'
 export type * from './models/Account'
 export type * from './models/Session'
 export type * from './models/VerificationToken'
 export type * from './models/PasswordResetToken'
 export type * from './models/Errand'
+export type * from './models/ErrandMember'
 export type * from './models/ErrandNote'
 export type * from './models/ActivityLog'
 export type * from './models/Attachment'

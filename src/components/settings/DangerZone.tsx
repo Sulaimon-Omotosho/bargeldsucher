@@ -2,31 +2,25 @@
 
 import { useState } from 'react'
 import { Archive, Trash2, AlertTriangle, Loader2 } from 'lucide-react'
+import { useAccountControl } from '@/hooks/useSettings'
 
-interface DangerZoneProps {
-  onArchiveAccount: () => void
-  onDeleteAccount: (password: string) => void
-  isPending: boolean
-}
-
-export function DangerZone({
-  onArchiveAccount,
-  onDeleteAccount,
-  isPending,
-}: DangerZoneProps) {
+export function DangerZone() {
   const [confirmWord, setConfirmWord] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleArchive = (e: React.FormEvent) => {
+  const { isArchiving, isDeleting, archiveAccount, deleteAccount } =
+    useAccountControl()
+
+  const handleArchive = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (isPending) return
-    onArchiveAccount()
+    if (isArchiving) return
+    await archiveAccount()
   }
 
-  const handleDelete = (e: React.FormEvent) => {
+  const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (confirmWord !== 'DELETE' || !password || isPending) return
-    onDeleteAccount(password)
+    if (confirmWord !== 'DELETE' || !password || isDeleting) return
+    await deleteAccount(password)
   }
 
   return (
@@ -58,10 +52,14 @@ export function DangerZone({
           <button
             type='button'
             onClick={handleArchive}
-            disabled={isPending}
-            className='w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-800 bg-white border border-slate-200 shadow-sm transition hover:bg-slate-100 disabled:opacity-50 shrink-0'
+            disabled={isArchiving}
+            className='w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-800 bg-white border border-slate-200 shadow-sm transition hover:bg-slate-100 disabled:opacity-50 shrink-0 min-w-[120px]'
           >
-            Archive Account
+            {isArchiving ? (
+              <Loader2 className='h-3.5 w-3.5 animate-spin' />
+            ) : (
+              'Archive Account'
+            )}
           </button>
         </div>
       </div>
@@ -122,10 +120,10 @@ export function DangerZone({
 
         <button
           type='submit'
-          disabled={confirmWord !== 'DELETE' || !password || isPending}
+          disabled={confirmWord !== 'DELETE' || !password || isDeleting}
           className='w-full inline-flex items-center justify-center gap-2 rounded-xl bg-rose-600 px-4 py-2 text-sm font-bold text-white hover:bg-rose-700 transition-colors shadow-sm disabled:opacity-40 disabled:cursor-not-allowed'
         >
-          {isPending ? (
+          {isDeleting ? (
             <Loader2 className='h-3.5 w-3.5 animate-spin' />
           ) : (
             'Permanently Delete Account'

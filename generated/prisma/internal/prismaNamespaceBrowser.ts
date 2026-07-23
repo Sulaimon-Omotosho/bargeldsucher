@@ -52,11 +52,15 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  UserProfile: 'UserProfile',
+  Address: 'Address',
+  UserPreferences: 'UserPreferences',
   Account: 'Account',
   Session: 'Session',
   VerificationToken: 'VerificationToken',
   PasswordResetToken: 'PasswordResetToken',
   Errand: 'Errand',
+  ErrandMember: 'ErrandMember',
   ErrandNote: 'ErrandNote',
   ActivityLog: 'ActivityLog',
   Attachment: 'Attachment',
@@ -82,6 +86,7 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const UserScalarFieldEnum = {
   id: 'id',
+  username: 'username',
   name: 'name',
   firstName: 'firstName',
   lastName: 'lastName',
@@ -90,11 +95,57 @@ export const UserScalarFieldEnum = {
   password: 'password',
   image: 'image',
   isOAuth: 'isOAuth',
+  isArchived: 'isArchived',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const UserProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  phone: 'phone',
+  dateOfBirth: 'dateOfBirth',
+  occupation: 'occupation',
+  bio: 'bio',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserProfileScalarFieldEnum = (typeof UserProfileScalarFieldEnum)[keyof typeof UserProfileScalarFieldEnum]
+
+
+export const AddressScalarFieldEnum = {
+  id: 'id',
+  profileId: 'profileId',
+  streetAddress: 'streetAddress',
+  city: 'city',
+  state: 'state',
+  country: 'country',
+  postalCode: 'postalCode',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AddressScalarFieldEnum = (typeof AddressScalarFieldEnum)[keyof typeof AddressScalarFieldEnum]
+
+
+export const UserPreferencesScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  currency: 'currency',
+  theme: 'theme',
+  weekStartsOn: 'weekStartsOn',
+  symbolPosition: 'symbolPosition',
+  timezone: 'timezone',
+  language: 'language',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserPreferencesScalarFieldEnum = (typeof UserPreferencesScalarFieldEnum)[keyof typeof UserPreferencesScalarFieldEnum]
 
 
 export const AccountScalarFieldEnum = {
@@ -159,6 +210,18 @@ export const ErrandScalarFieldEnum = {
 export type ErrandScalarFieldEnum = (typeof ErrandScalarFieldEnum)[keyof typeof ErrandScalarFieldEnum]
 
 
+export const ErrandMemberScalarFieldEnum = {
+  id: 'id',
+  errandId: 'errandId',
+  userId: 'userId',
+  role: 'role',
+  allocatedBudget: 'allocatedBudget',
+  joinedAt: 'joinedAt'
+} as const
+
+export type ErrandMemberScalarFieldEnum = (typeof ErrandMemberScalarFieldEnum)[keyof typeof ErrandMemberScalarFieldEnum]
+
+
 export const ErrandNoteScalarFieldEnum = {
   id: 'id',
   content: 'content',
@@ -204,7 +267,8 @@ export const ExpenseScalarFieldEnum = {
   expenseDate: 'expenseDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  errandId: 'errandId'
+  errandId: 'errandId',
+  userId: 'userId'
 } as const
 
 export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeof ExpenseScalarFieldEnum]

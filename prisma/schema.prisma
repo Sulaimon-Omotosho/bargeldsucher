@@ -9,6 +9,7 @@ datasource db {
 
 model User {
   id            String   @id @default(cuid())
+  username      String?  @unique
   name          String?
   firstName     String?
   lastName      String?
@@ -19,13 +20,68 @@ model User {
 
   isOAuth       Boolean  @default(false)
 
+  isArchived    Boolean  @default(false)
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  profile             UserProfile?
+  preferences         UserPreferences?
+
   errands             Errand[]
+  errandMemberships   ErrandMember[]
+  expenses            Expense[]
+
   accounts            Account[]
   sessions            Session[]
   passwordResetTokens PasswordResetToken[]
+}
+
+model UserProfile {
+  id          String    @id @default(cuid())
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  phone       String?
+  dateOfBirth DateTime?
+  occupation  String?
+  bio         String?
+  
+  address     Address?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Address {
+  id            String       @id @default(cuid())
+  profileId     String       @unique
+  profile       UserProfile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  streetAddress String?      
+  city          String?
+  state         String?
+  country       String?
+  postalCode    String?
+
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model UserPreferences {
+  id             String    @id @default(cuid())
+  userId         String    @unique
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  currency       Currency  @default(NGN)
+  theme          Theme     @default(SYSTEM)
+  weekStartsOn   WeekStart @default(MONDAY)
+  symbolPosition String    @default("before")
+  timezone       String?
+  language       String    @default("en")
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 model Account {
@@ -87,12 +143,31 @@ model Errand {
   userId         String
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   
+  members        ErrandMember[]
   expenses       Expense[]
   notes          ErrandNote[]     
   activities     ActivityLog[]   
   attachments    Attachment[]     
 
   @@index([userId, isArchived, status])
+}
+
+model ErrandMember {
+  id              String     @id @default(cuid())
+  errandId        String
+  errand          Errand     @relation(fields: [errandId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  role            ErrandRole @default(COLLABORATOR)
+
+  allocatedBudget Decimal?   @db.Decimal(12, 2) 
+  
+  joinedAt        DateTime   @default(now())
+
+  @@unique([errandId, userId])
+  @@index([userId])
+  @@index([errandId])
 }
 
 model ErrandNote {
@@ -145,6 +220,11 @@ model Expense {
   updatedAt   DateTime        @updatedAt
   errandId    String
   errand      Errand          @relation(fields: [errandId], references: [id], onDelete: Cascade)
+  userId    String?  
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([errandId])
+  @@index([userId])
 }
 
 model Notification {
@@ -182,6 +262,12 @@ enum ErrandStatus {
   COMPLETED
 }
 
+enum ErrandRole {
+  OWNER
+  COLLABORATOR
+  VIEWER
+}
+
 enum ActivityLogType {
   SYSTEM         
   CREATE_EXPENSE
@@ -196,4 +282,22 @@ enum NotificationType {
   CASH_ALERT    
   ERRAND_STATUS    
   SYSTEM_SECURITY 
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+enum Currency {
+  NGN
+  USD
+  EUR
+  GBP
+}
+
+enum WeekStart {
+  MONDAY
+  SUNDAY
 }

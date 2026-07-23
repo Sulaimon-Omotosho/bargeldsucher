@@ -29,6 +29,15 @@ export const ErrandStatus = {
 export type ErrandStatus = (typeof ErrandStatus)[keyof typeof ErrandStatus]
 
 
+export const ErrandRole = {
+  OWNER: 'OWNER',
+  COLLABORATOR: 'COLLABORATOR',
+  VIEWER: 'VIEWER'
+} as const
+
+export type ErrandRole = (typeof ErrandRole)[keyof typeof ErrandRole]
+
+
 export const ActivityLogType = {
   SYSTEM: 'SYSTEM',
   CREATE_EXPENSE: 'CREATE_EXPENSE',
@@ -49,3 +58,30 @@ export const NotificationType = {
 } as const
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
+
+
+export const Theme = {
+  LIGHT: 'LIGHT',
+  DARK: 'DARK',
+  SYSTEM: 'SYSTEM'
+} as const
+
+export type Theme = (typeof Theme)[keyof typeof Theme]
+
+
+export const Currency = {
+  NGN: 'NGN',
+  USD: 'USD',
+  EUR: 'EUR',
+  GBP: 'GBP'
+} as const
+
+export type Currency = (typeof Currency)[keyof typeof Currency]
+
+
+export const WeekStart = {
+  MONDAY: 'MONDAY',
+  SUNDAY: 'SUNDAY'
+} as const
+
+export type WeekStart = (typeof WeekStart)[keyof typeof WeekStart]

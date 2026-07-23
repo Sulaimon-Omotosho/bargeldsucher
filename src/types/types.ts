@@ -1,6 +1,10 @@
 import { ExpenseCategory } from '../../generated/prisma/enums'
 import { ActivityLog, ErrandNote, Prisma } from '../../generated/prisma/client'
 
+export type Theme = 'LIGHT' | 'DARK' | 'SYSTEM'
+export type Currency = 'NGN' | 'USD' | 'EUR' | 'GBP'
+export type WeekStart = 'MONDAY' | 'SUNDAY'
+
 type ErrandModel = Prisma.ErrandGetPayload<{
   include: {
     expenses: true
@@ -52,23 +56,58 @@ export interface CreateExpenseInput {
   errandId: string
 }
 
+export interface UserPreferencesData {
+  currency: Currency
+  theme: Theme
+  weekStartsOn: WeekStart
+  symbolPosition: string
+  timezone?: string | null
+  language: string
+}
+
+export interface AddressData {
+  streetAddress?: string | null
+  city?: string | null
+  state?: string | null
+  country?: string | null
+  postalCode?: string | null
+}
+
+export interface UserProfileData {
+  firstName: string
+  lastName: string
+  username: string | null
+  image: string | null
+  phone: string | null
+  occupation: string | null
+  bio: string | null
+  dateOfBirth: Date | null
+  address: AddressData
+}
+
 export interface SettingsData {
-  // user: User
-  name: string
-  email: string
-  isEmailVerified: boolean
-  memberSince: string
-  lastLogin: string
-  completionPercentage: number
+  user: {
+    name: string
+    email: string
+    isEmailVerified: boolean
+    memberSince: string
+    lastLogin: string
+  }
+
+  profile: UserProfileData
+
+  preferences: UserPreferencesData
+
   stats: {
     errands: number
     expenses: number
     funding: number
     accountAgeDays: number
   }
+
   securityChecks: {
     emailVerified: boolean
-    strongPassword: boolean
+    hasPassword: boolean
     recoveryEmail: boolean
     activeSessionProtected: boolean
   }

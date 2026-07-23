@@ -144,7 +144,7 @@ export function AppSidebar() {
                       <SidebarMenuButton
                         isActive={isActive}
                         tooltip={name}
-                        className={`flex g-3 rounded-xl px-4 py-5 text-sm font-semibold transition-all duration-200 ${
+                        className={`cursor-pointer flex g-3 rounded-xl px-4 py-5 text-sm font-semibold transition-all duration-200 ${
                           isActive
                             ? 'border border-slate-200/50 bg-white text-emerald-700 shadow-sm'
                             : 'text-slate-500 hover:bg-white hover:text-slate-900'
@@ -174,7 +174,7 @@ export function AppSidebar() {
                   <Link href='/settings?tab=profile'>
                     <SidebarMenuButton
                       tooltip='Settings'
-                      className={`w-full rounded-xl px-4 py-5 text-sm font-semibold transition-all duration-200 ${
+                      className={`cursor-pointer w-full rounded-xl px-4 py-5 text-sm font-semibold transition-all duration-200 ${
                         isSettingsPage
                           ? 'border border-slate-200/50 bg-white text-slate-900 shadow-sm'
                           : 'text-slate-500 hover:bg-white hover:text-slate-900'
@@ -189,13 +189,8 @@ export function AppSidebar() {
                       <span className='group-data-[collapsible=icon]:hidden'>
                         Settings
                       </span>
-                      {/* 
-                    <CollapsibleTrigger className='w-full'>
-                      <ChevronRight className='ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden' />
-                    </CollapsibleTrigger> */}
                     </SidebarMenuButton>
                   </Link>
-                  {/* </CollapsibleTrigger> */}
 
                   <CollapsibleContent>
                     <SidebarMenuSub className='my-2 ml-5 space-y-1 border-l border-slate-200 pl-3 group-data-[collapsible=icon]:hidden'>
@@ -208,7 +203,7 @@ export function AppSidebar() {
                               <SidebarMenuSubButton
                                 isActive={isActive}
                                 onClick={() => changeSettingsTab(tab)}
-                                className={`w-full rounded-lg px-3 py-4 text-xs font-semibold transition-all ${
+                                className={`cursor-pointer w-full rounded-lg px-3 py-4 text-xs font-semibold transition-all ${
                                   isActive
                                     ? isDanger
                                       ? 'bg-rose-50 text-rose-700 hover:bg-rose-50'
