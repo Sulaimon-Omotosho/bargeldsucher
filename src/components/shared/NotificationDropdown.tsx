@@ -232,7 +232,7 @@ export default function NotificationDropdown({
     <>
       {/* 1. Main Bell Button always triggers the Popover Dropdown */}
       <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-        <PopoverTrigger className='group relative rounded-xl p-2 text-slate-400 hover:bg-slate-100/80 hover:text-slate-700 transition-all focus:outline-none'>
+        <PopoverTrigger className='group relative rounded-xl p-2 text-slate-400 hover:bg-slate-100/80 hover:text-slate-700 transition-all focus:outline-none cursor-pointer'>
           {/* <button type='button'> */}
           <Bell className='h-5 w-5 transition-transform group-hover:rotate-12 duration-200' />
           {unreadCount > 0 && (
