@@ -4,6 +4,7 @@ import './globals.css'
 import AuthSessionProvider from '@/providers/session-provider'
 import QueryProvider from '@/providers/QueryProvider'
 import { Toaster } from 'sonner'
+import { InactivityProvider } from '@/providers/InactivityProvider'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -33,8 +34,10 @@ export default function RootLayout({
       >
         <AuthSessionProvider>
           <QueryProvider>
-            {children}
-            <Toaster richColors position='bottom-right' />
+            <InactivityProvider>
+              {children}
+              <Toaster richColors position='bottom-right' />
+            </InactivityProvider>
           </QueryProvider>
         </AuthSessionProvider>
       </body>

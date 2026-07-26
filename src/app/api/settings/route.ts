@@ -366,56 +366,56 @@ export async function PATCH(req: Request) {
       })
     }
 
-    if (section === 'security') {
-      const { currentPassword, newPassword } = ChangePasswordSchema.parse(data)
+    // if (section === 'security') {
+    //   const { , newPassword } = ChangePasswordSchema.parse(data)
 
-      const dbUser = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { password: true },
-      })
+    //   const dbUser = await prisma.user.findUnique({
+    //     where: { id: userId },
+    //     select: { password: true },
+    //   })
 
-      if (!dbUser || !dbUser.password) {
-        return NextResponse.json(
-          { message: 'Password record not found for this account.' },
-          { status: 400 },
-        )
-      }
+    //   if (!dbUser || !dbUser.password) {
+    //     return NextResponse.json(
+    //       { message: 'Password record not found for this account.' },
+    //       { status: 400 },
+    //     )
+    //   }
 
-      const isPasswordValid = await bcrypt.compare(
-        currentPassword,
-        dbUser.password,
-      )
+    //   const isPasswordValid = await bcrypt.compare(
+    //     currentPassword,
+    //     dbUser.password,
+    //   )
 
-      if (!isPasswordValid) {
-        return NextResponse.json(
-          { message: 'Incorrect current password' },
-          { status: 400 },
-        )
-      }
+    //   if (!isPasswordValid) {
+    //     return NextResponse.json(
+    //       { message: 'Incorrect current password' },
+    //       { status: 400 },
+    //     )
+    //   }
 
-      const hashedPassword = await bcrypt.hash(newPassword, 17)
+    //   const hashedPassword = await bcrypt.hash(newPassword, 17)
 
-      await prisma.$transaction(async (tx) => {
-        await tx.user.update({
-          where: { id: userId },
-          data: { password: hashedPassword },
-        })
+    //   await prisma.$transaction(async (tx) => {
+    //     await tx.user.update({
+    //       where: { id: userId },
+    //       data: { password: hashedPassword },
+    //     })
 
-        await tx.notification.create({
-          data: {
-            userId: userId,
-            type: 'SYSTEM_SECURITY',
-            title: 'Password Changed',
-            message: 'Your account password was successfully updated.',
-            actionRoute: '/settings',
-          },
-        })
-      })
+    //     await tx.notification.create({
+    //       data: {
+    //         userId: userId,
+    //         type: 'SYSTEM_SECURITY',
+    //         title: 'Password Changed',
+    //         message: 'Your account password was successfully updated.',
+    //         actionRoute: '/settings',
+    //       },
+    //     })
+    //   })
 
-      return NextResponse.json({
-        message: 'Password updated successfully',
-      })
-    }
+    //   return NextResponse.json({
+    //     message: 'Password updated successfully',
+    //   })
+    // }
 
     return NextResponse.json({ message: 'Invalid section' }, { status: 400 })
   } catch (error) {

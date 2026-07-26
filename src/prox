@@ -1,0 +1,41 @@
+// import { NextResponse } from 'next/server'
+// import { auth } from '@/auth'
+
+// export default auth((req) => {
+//   const { nextUrl } = req
+//   const isLoggedIn = !!req.auth
+//   const isArchived = req.auth?.user?.isArchived
+
+//   const isArchivedPage = nextUrl.pathname === '/account-archived'
+//   const isUnarchiveApi = nextUrl.pathname === '/api/account/unarchive'
+//   const isSignOutApi = nextUrl.pathname.startsWith('/api/auth/signout')
+
+//   // 1. If user is logged in and archived
+//   if (isLoggedIn && isArchived) {
+//     // Allow access ONLY to the archived notice page, unarchive API, and sign-out
+//     if (!isArchivedPage && !isUnarchiveApi && !isSignOutApi) {
+//       return NextResponse.redirect(new URL('/account-archived', req.url))
+//     }
+//     return NextResponse.next()
+//   }
+
+//   // 2. If user is NOT archived but attempts to visit /account-archived manually
+//   if (isLoggedIn && !isArchived && isArchivedPage) {
+//     return NextResponse.redirect(new URL('/dashboard', req.url))
+//   }
+
+//   return NextResponse.next()
+// })
+
+// export const config = {
+//   matcher: [
+//     /*
+//      * Match all request paths except for the ones starting with:
+//      * - _next/static (static files)
+//      * - _next/image (image optimization files)
+//      * - favicon.ico (favicon file)
+//      * - public assets (.svg, .png, .jpg, etc.)
+//      */
+//     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+//   ],
+// }

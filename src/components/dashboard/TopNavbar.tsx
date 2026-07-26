@@ -65,7 +65,7 @@ export default function TopNavbar() {
       <div className='flex items-center gap-3.5'>
         {/* Real-time Notification Center Hub */}
 
-        <NotificationDropdown userId={currentUserId} />
+        <NotificationDropdown userId={currentUserId!} />
 
         <div className='h-4 w-px bg-slate-200' />
 

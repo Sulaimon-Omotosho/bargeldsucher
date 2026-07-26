@@ -2,7 +2,6 @@ import { auth } from '@/auth'
 import { AppSidebar } from '@/components/dashboard/AppSidebar'
 import TopNavbar from '@/components/dashboard/TopNavbar'
 import { SidebarProvider } from '@/components/ui/sidebar'
-import { useNotifications } from '@/hooks/useNotifications'
 import NotificationBridge from '@/providers/NotificationBridge'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
@@ -17,9 +16,11 @@ export default async function DashboardLayout({
     redirect('/login')
   }
 
-  const currentUserId = session.user.id
+  if (session?.user?.isArchived) {
+    redirect('/account-archived')
+  }
 
-  // useNotifications(currentUserId)
+  const currentUserId = session.user.id
 
   return (
     <SidebarProvider>

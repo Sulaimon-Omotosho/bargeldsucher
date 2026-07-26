@@ -127,30 +127,6 @@ export function useProfile() {
     }
   }
 
-  // Trigger verification email resend
-  // const triggerEmailVerification = async () => {
-  //   try {
-  //     setIsVerifyingEmail(true)
-  //     const res = await fetch('/api/settings/profile/verify-email', {
-  //       method: 'POST',
-  //     })
-
-  //     if (!res.ok) {
-  //       const errorData = await res.json().catch(() => ({}))
-  //       throw new Error(errorData.message || 'Failed to send verification link')
-  //     }
-
-  //     toast.success('Verification link sent to your email')
-  //     return { success: true }
-  //   } catch (err: any) {
-  //     const message = err.message || 'Could not send verification email'
-  //     toast.error(message)
-  //     return { success: false, error: message }
-  //   } finally {
-  //     setIsVerifyingEmail(false)
-  //   }
-  // }
-
   return {
     isSaving,
     isVerifyingEmail,
@@ -276,110 +252,6 @@ export function usePreferences() {
   }
 }
 
-// Security
-export function useSecurity() {
-  const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [isChangingPassword, setIsChangingPassword] = useState(false)
-  const [isVerifyingEmail, setIsVerifyingEmail] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  const fetchSecurityStatus = useCallback(async () => {
-    try {
-      setIsLoading(true)
-      setError(null)
-      const res = await fetch('/api/settings/security')
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}))
-        throw new Error(errorData.message || 'Failed to load security settings')
-      }
-
-      const json = await res.json()
-      setIsEmailVerified(json.isEmailVerified ?? false)
-    } catch (err: any) {
-      const message = err.message || 'Could not fetch security details'
-      setError(message)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchSecurityStatus()
-  }, [fetchSecurityStatus])
-
-  // Update Password Mutation
-  const updatePassword = async (values: ChangePasswordFormValues) => {
-    try {
-      setIsChangingPassword(true)
-      setError(null)
-
-      const res = await fetch('/api/settings/security', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
-      })
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}))
-        throw new Error(errorData.message || 'Failed to update password')
-      }
-
-      toast.success('Password updated successfully!')
-      return { success: true }
-    } catch (err: any) {
-      const message = err.message || 'Failed to update password'
-      setError(message)
-      toast.error(message)
-      return { success: false, error: message }
-    } finally {
-      setIsChangingPassword(false)
-    }
-  }
-
-  // Email Verification Trigger
-  const triggerEmailVerification = async () => {
-    try {
-      setIsVerifyingEmail(true)
-      setError(null)
-
-      const res = await fetch('/api/settings/security', {
-        method: 'POST',
-      })
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}))
-        throw new Error(
-          errorData.message || 'Failed to send verification email',
-        )
-      }
-
-      toast.success('Verification link sent to your email!')
-      return { success: true }
-    } catch (err: any) {
-      const message = err.message || 'Failed to trigger verification'
-      setError(message)
-      toast.error(message)
-      return { success: false, error: message }
-    } finally {
-      setIsVerifyingEmail(false)
-    }
-  }
-
-  return {
-    isEmailVerified,
-    isLoading,
-    isChangingPassword,
-    isVerifyingEmail,
-    isError: !!error,
-    error,
-    updatePassword,
-    triggerEmailVerification,
-    refetch: fetchSecurityStatus,
-  }
-}
-
 // Danger Zone
 export function useAccountControl() {
   const [isArchiving, setIsArchiving] = useState(false)
@@ -391,7 +263,7 @@ export function useAccountControl() {
       setIsArchiving(true)
       setError(null)
 
-      const res = await fetch('/api/settings/account/archive', {
+      const res = await fetch('/api/account/archive', {
         method: 'POST',
       })
 

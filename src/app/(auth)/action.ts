@@ -100,45 +100,6 @@ export async function forgotPassword(formData: FormData) {
 
   const resetLink = `${process.env.NEXTAUTH_URL}/reset-password?token=${rawToken}`
 
-  // await resend.emails.send({
-  //   from: 'Bargeldsucher <onboarding@resend.dev>',
-  //   to: email,
-  //   subject: 'Reset your password',
-  //   html: `
-  //   <h2>Password Reset</h2>
-
-  //   <p>You requested a password reset.</p>
-
-  //   <p>
-  //     <a href="${resetLink}">
-  //       Reset Password
-  //     </a>
-  //   </p>
-
-  //   <p>This link expires in one hour.</p>
-  // `,
-  // })
-  // await sendEmail({
-  //   to: user.email,
-  //   subject: 'Reset your Bargeldsucher password',
-  //   html: `
-  //   <h2>Password Reset</h2>
-
-  //   <p>You requested to reset your password.</p>
-
-  //   <p>
-  //     <a href="${resetLink}">
-  //       Reset Password
-  //     </a>
-  //   </p>
-  //   <p>${resetLink}</p>
-
-  //   <p>This link expires in one hour.</p>
-
-  //   <p>If you didn't request this, ignore this email.</p>
-  // `,
-  // })
-
   await sendEmail({
     to: user.email,
     subject: 'Reset your Bargeldsucher password',

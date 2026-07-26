@@ -11,6 +11,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
   session: {
     strategy: 'jwt',
+    maxAge: 3 * 24 * 60 * 60,
+    updateAge: 24 * 60 * 60,
   },
 
   ...authConfig,
@@ -91,14 +93,39 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return true
     },
 
-    async jwt({ token, user }) {
-      if (user) token.id = user.id
+    async jwt({ token, user, trigger, session }) {
+      if (user) {
+        token.id = user.id
+        // token.isArchived = user.isArchived
+        if (typeof user.isArchived !== 'undefined') {
+          token.isArchived = user.isArchived
+        } else if (user.id) {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: user.id },
+            select: { isArchived: true },
+          })
+          token.isArchived = dbUser?.isArchived ?? false
+        }
+      }
+
+      if (trigger === 'update' && session) {
+        return { ...token, ...session }
+      }
       return token
     },
 
     async session({ session, token }) {
+      // if (session.user && token.id) {
+      //   ;(session.user as any).id = token.id
+      //   // session.user.id = token.id as string
+      // }
+      // if (session.user && token.id) {
+      //   ;(((session.user as any).id = token.id),
+      //     ((session.user as any).isArchived = token.isArchived as boolean))
+      // }
       if (session.user) {
-        ;(session.user as any).id = token.id
+        session.user.id = token.id as string
+        session.user.isArchived = token.isArchived as boolean
       }
 
       return session

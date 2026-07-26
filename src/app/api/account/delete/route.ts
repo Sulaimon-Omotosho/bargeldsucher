@@ -1,56 +1,73 @@
+import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
-import bcrypt from 'bcryptjs'
-import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
   try {
     const session = await auth()
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    if (!session?.user?.id || !session.user.email) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
     }
 
-    const { password } = await req.json()
+    const { token } = await req.json()
 
-    if (!password) {
+    if (!token || typeof token !== 'string') {
       return NextResponse.json(
-        { message: 'Password is required' },
+        { message: 'Verification token is required.' },
         { status: 400 },
       )
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { password: true },
+    const userEmail = session.user.email
+    const userId = session.user.id
+
+    // 1. Verify token
+    const tokenRecord = await prisma.verificationToken.findFirst({
+      where: {
+        identifier: userEmail,
+        token,
+      },
     })
 
-    if (!user || !user.password) {
+    if (!tokenRecord) {
       return NextResponse.json(
-        { message: 'User record or password not found' },
+        { message: 'Invalid verification token.' },
         { status: 400 },
       )
     }
 
-    const isMatch = await bcrypt.compare(password, user.password)
-    if (!isMatch) {
+    // 2. Check expiration
+    if (new Date(tokenRecord.expires) < new Date()) {
+      await prisma.verificationToken.deleteMany({
+        where: { identifier: userEmail },
+      })
       return NextResponse.json(
-        { message: 'Incorrect password' },
+        {
+          message: 'Verification token has expired. Please request a new one.',
+        },
         { status: 400 },
       )
     }
 
+    // 3. Clean up token record
+    await prisma.verificationToken.deleteMany({
+      where: { identifier: userEmail },
+    })
+
+    // 4. Delete user account
     await prisma.user.delete({
-      where: { id: session.user.id },
+      where: { id: userId },
     })
 
     return NextResponse.json(
-      { message: 'Account permanently deleted' },
+      { message: 'Account permanently deleted.' },
       { status: 200 },
     )
   } catch (error) {
-    console.error('Account deletion error:', error)
+    console.error('Delete account error:', error)
     return NextResponse.json(
-      { message: 'An error occurred while deleting the account' },
+      { message: 'Server error during account deletion.' },
       { status: 500 },
     )
   }

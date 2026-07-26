@@ -104,11 +104,7 @@ export const ExpenseSchema = z.object({
 
 const ExtendedExpenseSchema = ExpenseSchema.extend({
   overspendExplanation: z.string().optional(),
-}).superRefine((data, ctx) => {
-  // We can pass current status checks here
-  // But to keep it bulletproof, we will manually run setError in React Hook Form on submit,
-  // which is much cleaner for dynamic external database states.
-})
+}).superRefine((data, ctx) => {})
 
 // SETTINGS
 export const ProfileSchema = z.object({
@@ -145,7 +141,7 @@ export const PreferencesSchema = z.object({
 
 export const ChangePasswordSchema = z
   .object({
-    currentPassword: z.string().min(1, 'Current password is required'),
+    token: z.string().min(5, 'Verification token is required'),
     newPassword: passwordSchema,
     confirmPassword: z.string().min(1, 'Please confirm your password'),
   })
@@ -153,3 +149,14 @@ export const ChangePasswordSchema = z
     path: ['confirmPassword'],
     message: 'Passwords do not match',
   })
+
+export const DeleteAccountSchema = z.object({
+  confirmWord: z.string().refine((val) => val === 'DELETE', {
+    message: 'You must type DELETE in all caps to confirm.',
+  }),
+  token: z
+    .string()
+    .min(6, 'Verification token must be 6 digits')
+    .max(6, 'Verification token must be 6 digits')
+    .optional(),
+})
