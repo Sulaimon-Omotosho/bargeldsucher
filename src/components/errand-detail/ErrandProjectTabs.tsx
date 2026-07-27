@@ -10,7 +10,6 @@ import {
 } from 'lucide-react'
 import { Expense, SerializedExpense } from '@/types/types'
 
-// Import existing modules
 import ErrandExpenseLedger from './ErrandExpenseLedger'
 import ErrandActivityFeed from './ErrandActivityFeed'
 import ErrandNotes from './ErrandNotes'
@@ -22,6 +21,8 @@ interface ErrandProjectTabsProps {
   initialFunding: number
   remainingCash: number
   isCompleted: boolean
+  canManageErrand?: boolean
+  canLogExpense?: boolean
 }
 
 type TabType = 'timeline' | 'expenses' | 'insights' | 'notes' | 'attachments'
@@ -32,6 +33,8 @@ export default function ErrandProjectTabs({
   initialFunding,
   remainingCash,
   isCompleted,
+  canManageErrand = true,
+  canLogExpense = true,
 }: ErrandProjectTabsProps) {
   const [activeTab, setActiveTab] = useState<TabType>('expenses')
 
@@ -73,7 +76,11 @@ export default function ErrandProjectTabs({
         {activeTab === 'timeline' && <ErrandActivityFeed errandId={id} />}
 
         {activeTab === 'expenses' && (
-          <ErrandExpenseLedger expenses={expenses} isCompleted={isCompleted} />
+          <ErrandExpenseLedger
+            expenses={expenses}
+            isCompleted={isCompleted}
+            canLogExpense={canLogExpense}
+          />
         )}
 
         {activeTab === 'insights' && (
@@ -96,9 +103,11 @@ export default function ErrandProjectTabs({
               Upload and store invoices, purchase slips, or payment captures
               linked directly to this errand.
             </p>
-            <button className='mt-4 bg-slate-50 hover:bg-slate-100 text-slate-700 text-[10px] font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition'>
-              Upload Attachment
-            </button>
+            {canLogExpense && !isCompleted && (
+              <button className='mt-4 bg-slate-50 hover:bg-slate-100 text-slate-700 text-[10px] font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition outline-none'>
+                Upload Attachment
+              </button>
+            )}
           </div>
         )}
       </div>

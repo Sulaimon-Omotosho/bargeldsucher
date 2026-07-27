@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useErrands } from '@/hooks/useErrands'
+import { useErrandsList } from '@/hooks/useErrands'
 import ErrandsSkeleton from '@/components/skeletons/ErrandsSkeleton'
 import { AlertCircle, RefreshCw } from 'lucide-react'
 
@@ -12,12 +12,20 @@ import ErrandsFilters, {
 } from '@/components/errands/ErrandsFilter'
 import ErrandCard from '@/components/errands/ErrandCard'
 
+export type ExtendedErrandFilter = ErrandStatusFilter
+
 export default function ErrandsPage() {
-  // Destructure payload cleanly from query instance
-  const { data, isLoading, isError, error, refetch } = useErrands()
+  // 1. Rename 'errands' from hook to 'payload' to avoid confusion with the array
+  const {
+    errands: payload,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useErrandsList()
 
   const [searchQuery, setSearchQuery] = useState('')
-  const [activeFilter, setActiveFilter] = useState<ErrandStatusFilter>('ALL')
+  const [activeFilter, setActiveFilter] = useState<ExtendedErrandFilter>('ALL')
 
   if (isError) {
     return (
@@ -31,9 +39,7 @@ export default function ErrandsPage() {
             Failed to Synchronize Errands
           </h3>
           <p className='text-sm text-slate-500 mt-1 max-w-md mx-auto'>
-            {error instanceof Error
-              ? error.message
-              : 'An unexpected network error occurred.'}
+            {error ?? 'An unexpected network error occurred.'}
           </p>
           <div className='mt-6 flex justify-center'>
             <button
@@ -48,13 +54,17 @@ export default function ErrandsPage() {
     )
   }
 
-  if (isLoading || !data) return <ErrandsSkeleton />
+  if (isLoading || !payload) return <ErrandsSkeleton />
 
-  // Extract variables out of the valid data object wrapper safe zone
-  const { errands, summary } = data
+  // 2. Extract the actual array and summary from payload
+  // (Adjust 'payload.errands' if your object key is payload.items or payload.data)
+  const list = payload.errands ?? []
+  const summary = payload.summary
 
-  // 3. Process Filtering Rules Engine
-  const filteredErrands = errands.filter((errand) => {
+  // 3. Explicit type on 'errand' derived from the array elements
+  type SingleErrand = NonNullable<typeof list>[number]
+
+  const filteredErrands = list.filter((errand: SingleErrand) => {
     const matchesSearch =
       errand.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (errand.description &&
@@ -62,7 +72,14 @@ export default function ErrandsPage() {
 
     if (!matchesSearch) return false
 
-    const remaining = errand.amountReceived - errand.totalSpent
+    const spent =
+      errand.totalSpent ??
+      errand.expenses?.reduce((sum, e) => sum + Number(e.amount), 0) ??
+      0
+
+    const allocated = Number(errand.amountReceived)
+    const remaining = allocated - spent
+    const memberCount = errand.members?.length ?? errand._count?.members ?? 0
 
     switch (activeFilter) {
       case 'ACTIVE':
@@ -71,6 +88,8 @@ export default function ErrandsPage() {
         return errand.status === 'COMPLETED' || remaining === 0
       case 'OVER_BUDGET':
         return remaining < 0
+      case 'SHARED':
+        return memberCount > 0
       case 'THIS_MONTH': {
         const currentMonth = new Date().getMonth()
         const currentYear = new Date().getFullYear()
@@ -90,18 +109,19 @@ export default function ErrandsPage() {
     <div className='space-y-6 animate-in fade-in duration-300 pb-12'>
       <ErrandsHeader />
 
-      {/* Populating parameters dynamically straight out of computed payload backend summary pack */}
-      <ErrandsSummary
-        totalAllocated={summary.totalAllocated}
-        totalSpent={summary.totalSpent}
-        totalErrandsCount={summary.totalErrandsCount}
-      />
+      {summary && (
+        <ErrandsSummary
+          totalAllocated={summary.totalAllocated}
+          totalSpent={summary.totalSpent}
+          totalErrandsCount={summary.totalErrandsCount}
+        />
+      )}
 
       <ErrandsFilters
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        activeFilter={activeFilter}
-        setActiveFilter={setActiveFilter}
+        activeFilter={activeFilter as ErrandStatusFilter}
+        setActiveFilter={(f) => setActiveFilter(f as ExtendedErrandFilter)}
       />
 
       {filteredErrands.length === 0 ? (

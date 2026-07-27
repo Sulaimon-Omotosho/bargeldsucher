@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { redis } from '@/lib/redis'
 import { NotificationType } from '../../../../generated/prisma/enums'
+import { ExpenseSchema } from '@/lib/ValidationSchema'
 
 export async function POST(req: Request) {
   try {
@@ -13,6 +14,18 @@ export async function POST(req: Request) {
 
     const userId = session.user.id
     const data = await req.json()
+
+    const parseResult = ExpenseSchema.safeParse(data)
+    if (!parseResult.success) {
+      return NextResponse.json(
+        {
+          error: 'Validation failed',
+          details: parseResult.error.flatten().fieldErrors,
+        },
+        { status: 400 },
+      )
+    }
+
     const {
       description,
       amount,
@@ -22,27 +35,31 @@ export async function POST(req: Request) {
       overspendExplanation,
       vendor,
       receiptUrl,
-    } = data
-
-    if (!description || !amount || !category || !errandId) {
-      return NextResponse.json(
-        {
-          error:
-            'Missing required parameters (description, amount, category, errandId).',
-        },
-        { status: 400 },
-      )
-    }
+    } = parseResult.data
 
     const result = await prisma.$transaction(async (tx) => {
       const errand = await tx.errand.findUnique({
-        where: { id: errandId, userId: userId },
-        include: { expenses: true },
+        where: { id: errandId },
+        include: {
+          expenses: true,
+          members: true,
+        },
       })
 
       if (!errand) throw { status: 404, message: 'Errand workspace not found' }
-      if (errand.status === 'COMPLETED')
+      if (errand.status === 'COMPLETED') {
         throw { status: 400, message: 'Cannot modify closed errands' }
+      }
+
+      const isOwner = errand.userId === userId
+      const isCollaborator = errand.members.some((m) => m.userId === userId)
+
+      if (!isOwner && !isCollaborator) {
+        throw {
+          status: 403,
+          message: 'You do not have permission to log expenses on this errand.',
+        }
+      }
 
       const allocated = Number(errand.amountReceived)
       const currentTotal = errand.expenses.reduce(
@@ -54,20 +71,31 @@ export async function POST(req: Request) {
       const overspendAmount = proposedTotal - allocated
       const overspendPercent =
         allocated > 0 ? (overspendAmount / allocated) * 100 : 0
+      const isOverspending = overspendPercent > 0
 
-      // Absolute Lock (30%+)
-      if (overspendPercent > 30) {
+      if (!isOwner && isOverspending) {
+        // Collaborators are hard-locked at 0% overspend
         throw {
           status: 422,
-          message: `Hard Limit Crossed: Spending is locked at a maximum 30% buffer (₦${(allocated * 1.3).toLocaleString()}).`,
+          message: `Budget Exceeded: As a collaborator, you cannot exceed the allocated budget of ₦${allocated.toLocaleString()}. Please request an allocation top-up from the owner.`,
         }
       }
 
-      const isOverspending = overspendPercent > 0
-      if (isOverspending && !overspendExplanation?.trim()) {
-        throw {
-          status: 400,
-          message: `Justification Required: Please explain why this is exceeding its budget.`,
+      if (isOwner) {
+        if (overspendPercent > 30) {
+          throw {
+            status: 422,
+            message: `Hard Limit Crossed: Spending is locked at a maximum 30% buffer (₦${(
+              allocated * 1.3
+            ).toLocaleString()}).`,
+          }
+        }
+
+        if (isOverspending && !overspendExplanation?.trim()) {
+          throw {
+            status: 400,
+            message: `Justification Required: Please explain why this is exceeding its budget.`,
+          }
         }
       }
 
@@ -112,18 +140,21 @@ export async function POST(req: Request) {
             title: isSevere
               ? 'Severe Budget Overrun logged'
               : 'Budget Overage Flex Authorized',
-            meta: `Exceeded allocation by ${overspendPercent.toFixed(1)}% | Note: "${justification.substring(0, 45)}..."`,
+            meta: `Exceeded allocation by ${overspendPercent.toFixed(
+              1,
+            )}% | Note: "${justification.substring(0, 45)}..."`,
           },
         })
 
-        // 🔔 Set up Budget Alert Notification
         shouldNotify = true
         notificationPayload = {
-          title: isSevere
-            ? 'Severe Budget Overrun! ⚠️'
-            : 'Budget Limit Exceeded 💸',
-          message: `Errand "${errand.title}" has gone over budget by ${overspendPercent.toFixed(1)}%. Reason: ${justification.substring(0, 45)}...`,
-          type: 'CASH_ALERT',
+          title: isSevere ? 'Severe Budget Overrun!' : 'Budget Limit Exceeded',
+          message: `Errand "${
+            errand.title
+          }" has gone over budget by ${overspendPercent.toFixed(
+            1,
+          )}%. Reason: ${justification.substring(0, 45)}...`,
+          type: NotificationType.CASH_ALERT,
         }
       } else {
         await tx.activityLog.create({
@@ -138,13 +169,14 @@ export async function POST(req: Request) {
         shouldNotify = true
         notificationPayload = {
           title: 'New Expense Tracked 📝',
-          message: `₦${Number(amount).toLocaleString()} logged for "${description}" on your errand.`,
-          type: 'ERRAND_STATUS',
+          message: `₦${Number(
+            amount,
+          ).toLocaleString()} logged for "${description}" on your errand.`,
+          type: NotificationType.ERRAND_STATUS,
         }
       }
 
       if (shouldNotify) {
-        // A. Save to PostgreSQL database for historical records
         await tx.notification.create({
           data: {
             userId,
@@ -157,7 +189,6 @@ export async function POST(req: Request) {
           },
         })
 
-        // B. Publish real-time event via Redis PubSub
         await redis.publish(
           `user:${userId}:notifications`,
           JSON.stringify({

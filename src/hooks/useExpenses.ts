@@ -1,3 +1,4 @@
+import { CreateExpenseInput } from '@/types/types'
 import {
   useInfiniteQuery,
   useMutation,
@@ -46,7 +47,7 @@ export function useCreateExpense(errandId?: string) {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: CreateExpenseInput) => {
       const res = await fetch('/api/expenses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -62,6 +63,7 @@ export function useCreateExpense(errandId?: string) {
     },
     onSuccess: (_, variables) => {
       const targetId = errandId || variables.errandId
+
       if (targetId) {
         queryClient.invalidateQueries({ queryKey: ['errand', targetId] })
       }

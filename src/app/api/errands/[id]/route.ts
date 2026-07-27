@@ -15,17 +15,31 @@ export async function GET(
     }
 
     const { id } = await params
+    const userId = session.user.id
 
-    const errand = await prisma.errand.findUnique({
-      where: { id: id, userId: session.user.id },
+    const errand = await prisma.errand.findFirst({
+      where: {
+        id,
+        OR: [{ userId }, { members: { some: { userId } } }],
+      },
       include: {
         expenses: true,
         activities: {
           orderBy: { createdAt: 'desc' },
         },
         notes: {
-          orderBy: {
-            createdAt: 'desc',
+          orderBy: { createdAt: 'desc' },
+        },
+        members: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
           },
         },
       },
@@ -38,6 +52,8 @@ export async function GET(
       )
     }
 
+    const isOwner = errand.userId === userId
+
     const serializedErrand = {
       ...errand,
       amountReceived: Number(errand.amountReceived),
@@ -47,6 +63,7 @@ export async function GET(
         amount: Number(exp.amount),
       })),
       activities: errand.activities,
+      isOwner,
     }
 
     return NextResponse.json(serializedErrand)

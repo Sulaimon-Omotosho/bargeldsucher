@@ -8,6 +8,7 @@ export type ErrandStatusFilter =
   | 'COMPLETED'
   | 'OVER_BUDGET'
   | 'THIS_MONTH'
+  | 'SHARED'
 
 interface ErrandsFiltersProps {
   searchQuery: string
@@ -28,6 +29,7 @@ export default function ErrandsFilters({
     { label: 'Completed', value: 'COMPLETED' },
     { label: 'Over Budget', value: 'OVER_BUDGET' },
     { label: 'This Month', value: 'THIS_MONTH' },
+    { label: 'Shared', value: 'SHARED' },
   ]
 
   return (

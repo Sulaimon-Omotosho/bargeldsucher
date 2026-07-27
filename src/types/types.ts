@@ -1,5 +1,6 @@
 import { ExpenseCategory } from '../../generated/prisma/enums'
 import { ActivityLog, ErrandNote, Prisma } from '../../generated/prisma/client'
+import { ErrandMember } from './dashboard'
 
 export type Theme = 'LIGHT' | 'DARK' | 'SYSTEM'
 export type Currency = 'NGN' | 'USD' | 'EUR' | 'GBP'
@@ -30,6 +31,7 @@ export type Errand = Omit<ErrandModel, 'amountReceived' | 'expenses'> & {
   expenses: SerializedExpense[]
   notes: ErrandNote[]
   content: string
+  members?: ErrandMember[]
 }
 
 export type Expense = Omit<ExpenseModel, 'amount' | 'errand'> & {
@@ -54,6 +56,7 @@ export interface CreateExpenseInput {
   receiptUrl?: string | null
   expenseDate: string
   errandId: string
+  overspendExplanation?: string
 }
 
 export interface UserPreferencesData {

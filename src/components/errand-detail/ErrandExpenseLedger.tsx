@@ -1,16 +1,18 @@
 'use client'
 
-import { Expense, SerializedExpense } from '@/types/types'
-import { Lock } from 'lucide-react'
+import { SerializedExpense } from '@/types/types'
+import { Lock, ShieldAlert } from 'lucide-react'
 
 interface ErrandExpenseLedgerProps {
   expenses: SerializedExpense[]
   isCompleted: boolean
+  canLogExpense?: boolean
 }
 
 export default function ErrandExpenseLedger({
   expenses,
   isCompleted,
+  canLogExpense = true,
 }: ErrandExpenseLedgerProps) {
   return (
     <div className='rounded-2xl border border-slate-200/60 bg-white p-6 shadow-sm space-y-4'>
@@ -56,12 +58,22 @@ export default function ErrandExpenseLedger({
         </div>
       )}
 
-      {isCompleted && (
+      {/* Lock or Permission Notice Banner */}
+      {isCompleted ? (
         <div className='bg-slate-50 border border-slate-200/60 p-3 rounded-xl text-[11px] text-slate-500 font-medium flex items-center gap-1.5 mt-2'>
-          <Lock className='h-3.5 w-3.5 text-slate-400' /> Expense creation has
-          been deactivated for this archived record file.
+          <Lock className='h-3.5 w-3.5 text-slate-400 shrink-0' />
+          <span>
+            Expense creation has been deactivated for this archived record file.
+          </span>
         </div>
-      )}
+      ) : !canLogExpense ? (
+        <div className='bg-amber-50/50 border border-amber-200/60 p-3 rounded-xl text-[11px] text-amber-800 font-medium flex items-center gap-1.5 mt-2'>
+          <ShieldAlert className='h-3.5 w-3.5 text-amber-500 shrink-0' />
+          <span>
+            You do not have permission to log expenses for this errand.
+          </span>
+        </div>
+      ) : null}
     </div>
   )
 }

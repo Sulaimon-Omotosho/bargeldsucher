@@ -8,6 +8,8 @@ interface ErrandStickySummaryProps {
   totalSpent: number
   remainingCash: number
   isCompleted: boolean
+  canManageErrand?: boolean
+  canLogExpense?: boolean
 }
 
 export default function ErrandStickySummary({
@@ -16,6 +18,8 @@ export default function ErrandStickySummary({
   totalSpent,
   remainingCash,
   isCompleted,
+  canManageErrand = true,
+  canLogExpense = true,
 }: ErrandStickySummaryProps) {
   return (
     <div className='sticky top-6 bg-white border border-slate-200/60 rounded-2xl p-5 shadow-sm space-y-4 hidden lg:block animate-in fade-in duration-300'>
@@ -41,16 +45,18 @@ export default function ErrandStickySummary({
         <div className='flex justify-between items-center text-xs font-semibold text-slate-500 pt-2.5'>
           <span>Remaining Liquidity</span>
           <span
-            className={`font-black ${remainingCash < 0 ? 'text-rose-600' : 'text-emerald-600'}`}
+            className={`font-black ${
+              remainingCash < 0 ? 'text-rose-600' : 'text-emerald-600'
+            }`}
           >
             ₦{remainingCash.toLocaleString()}
           </span>
         </div>
       </div>
 
-      {!isCompleted && (
+      {/* Only render the creation button if the errand is active AND the user is allowed to log expenses */}
+      {!isCompleted && canLogExpense && (
         <div className='pt-2'>
-          {/* Reuse your native modal insertion tool straight out of the box */}
           <CreateExpense errandId={id} />
         </div>
       )}

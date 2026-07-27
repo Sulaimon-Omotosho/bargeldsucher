@@ -25,9 +25,7 @@ import { ExpenseSchema, ExpenseCategoryEnum } from '@/lib/ValidationSchema'
 import { toast } from 'sonner'
 import { ExpenseCategory } from '../../../generated/prisma/enums'
 
-type ExpenseFormValues = z.input<typeof ExpenseSchema> & {
-  overspendExplanation?: string
-}
+type ExpenseFormValues = z.input<typeof ExpenseSchema>
 
 export default function CreateExpense({ errandId }: { errandId?: string }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -35,7 +33,6 @@ export default function CreateExpense({ errandId }: { errandId?: string }) {
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [isErrandDropdownOpen, setIsErrandDropdownOpen] = useState(false)
 
-  // Track if the user is actively focused on the Amount input block area
   const [isAmountFocused, setIsAmountFocused] = useState(false)
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -130,7 +127,6 @@ export default function CreateExpense({ errandId }: { errandId?: string }) {
   }, [errandId, setValue])
 
   const onSubmit = async (data: ExpenseFormValues) => {
-    // Clear any residual error first
     clearErrors('overspendExplanation')
 
     if (isHardBlocked) {
@@ -141,8 +137,6 @@ export default function CreateExpense({ errandId }: { errandId?: string }) {
       return
     }
 
-    // Live Check: If over budget, validate the live watched value directly
-    // instead of relying solely on Zod's parsing step.
     if (isOverBudget && !explanation?.trim()) {
       setError('overspendExplanation', {
         type: 'manual',

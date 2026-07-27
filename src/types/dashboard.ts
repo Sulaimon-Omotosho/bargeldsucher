@@ -70,6 +70,22 @@ export interface Errand {
   createdAt: Date | string
   updatedAt: Date | string
   expenses: Expense[]
+  members?: ErrandMember[]
+  _count?: {
+    members?: number
+  }
+}
+
+export interface ErrandMember {
+  id: string
+  userId: string
+  role?: string
+  user?: {
+    id: string
+    name?: string | null
+    email?: string | null
+    image?: string | null
+  }
 }
 
 export interface ErrandsPayload {

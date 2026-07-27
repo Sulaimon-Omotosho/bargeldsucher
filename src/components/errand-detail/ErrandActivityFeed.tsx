@@ -11,7 +11,7 @@ interface ErrandActivityFeedProps {
 export default function ErrandActivityFeed({
   errandId,
 }: ErrandActivityFeedProps) {
-  const { data: errand, isLoading, error } = useErrand(errandId)
+  const { errand, isLoading, error } = useErrand(errandId)
 
   if (isLoading) {
     return (

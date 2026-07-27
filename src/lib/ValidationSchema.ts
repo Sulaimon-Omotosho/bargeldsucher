@@ -72,6 +72,40 @@ export const ErrandSchema = z.object({
   ),
 })
 
+export const CreateErrandFormSchema = z
+  .object({
+    title: z.string().min(1, 'Title is required'),
+    amountReceived: z.string().min(1, 'Amount is required'),
+    description: z.string().optional(),
+    members: z
+      .array(
+        z.object({
+          query: z.string().optional(),
+          userId: z.string().optional(),
+          role: z.enum(['COLLABORATOR', 'VIEWER']).default('COLLABORATOR'),
+          allocatedBudget: z.string().optional(),
+        }),
+      )
+      .optional(),
+  })
+  .superRefine((data, ctx) => {
+    const totalErrandBudget = parseFloat(data.amountReceived) || 0
+
+    // Sum up non-empty allocated budgets
+    const totalAllocated = (data.members || []).reduce((sum, member) => {
+      const budget = parseFloat(member.allocatedBudget || '0')
+      return sum + (isNaN(budget) ? 0 : budget)
+    }, 0)
+
+    if (totalAllocated > totalErrandBudget) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Total allocated budget (₦${totalAllocated.toLocaleString()}) exceeds the errand budget (₦${totalErrandBudget.toLocaleString()}).`,
+        path: ['members'],
+      })
+    }
+  })
+
 export const ExpenseSchema = z.object({
   description: z.string().min(3, 'Description must be at least 3 characters'),
   amount: z.preprocess(
@@ -100,6 +134,7 @@ export const ExpenseSchema = z.object({
       'Expense date cannot be in the future',
     ),
   errandId: z.string().min(1, 'Please map this to a valid Errand loop'),
+  overspendExplanation: z.string().trim().optional().nullable(),
 })
 
 const ExtendedExpenseSchema = ExpenseSchema.extend({

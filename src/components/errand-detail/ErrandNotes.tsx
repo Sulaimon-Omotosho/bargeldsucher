@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { FileText, Plus, Trash2, Loader2 } from 'lucide-react'
-import { useErrand, useErrandNotes } from '@/hooks/useErrands'
-import { Errand } from '@/types/types'
+import { useErrand } from '@/hooks/useErrands'
+import { ErrandNote } from '../../../generated/prisma/client'
 
 interface ErrandNotesProps {
   errandId: string
@@ -11,16 +11,36 @@ interface ErrandNotesProps {
 
 export default function ErrandNotes({ errandId }: ErrandNotesProps) {
   const [newNote, setNewNote] = useState('')
-  const { data: errand, isLoading } = useErrand(errandId)
-  const { addNote, isAdding, deleteNote } = useErrandNotes(errandId)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  const handleAddNote = (e: React.FormEvent) => {
+  // Single consolidated hook instance
+  const {
+    errand,
+    isLoading,
+    addNote,
+    isAddingNote,
+    deleteNote,
+    isDeletingNote,
+  } = useErrand(errandId)
+
+  const handleAddNote = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!newNote.trim() || isAdding) return
+    const trimmed = newNote.trim()
+    if (!trimmed || isAddingNote) return
 
-    addNote(newNote.trim(), {
-      onSuccess: () => setNewNote(''),
-    })
+    const res = await addNote(trimmed)
+    if (res?.success) {
+      setNewNote('')
+    }
+  }
+
+  const handleDeleteNote = async (noteId: string) => {
+    setDeletingId(noteId)
+    try {
+      await deleteNote(noteId)
+    } finally {
+      setDeletingId(null)
+    }
   }
 
   if (isLoading) {
@@ -32,8 +52,7 @@ export default function ErrandNotes({ errandId }: ErrandNotesProps) {
     )
   }
 
-  // Fallback to empty array if no notes are populated yet
-  const notes = (errand as Errand)?.notes || []
+  const notes: ErrandNote[] = errand?.notes || []
 
   return (
     <div className='bg-white rounded-2xl border border-slate-200/60 p-5 shadow-sm space-y-4'>
@@ -50,19 +69,19 @@ export default function ErrandNotes({ errandId }: ErrandNotesProps) {
         <input
           type='text'
           placeholder={
-            isAdding ? 'Recording memo...' : 'Add operational note...'
+            isAddingNote ? 'Recording memo...' : 'Add operational note...'
           }
           value={newNote}
           onChange={(e) => setNewNote(e.target.value)}
-          disabled={isAdding}
+          disabled={isAddingNote}
           className='flex-1 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-900 placeholder-slate-400 outline-none transition focus:border-slate-900 disabled:opacity-60'
         />
         <button
           type='submit'
-          disabled={isAdding || !newNote.trim()}
-          className='bg-slate-900 text-white p-2 rounded-xl hover:bg-slate-800 transition disabled:bg-slate-300'
+          disabled={isAddingNote || !newNote.trim()}
+          className='bg-slate-900 text-white p-2 rounded-xl hover:bg-slate-800 transition disabled:bg-slate-300 outline-none cursor-pointer'
         >
-          {isAdding ? (
+          {isAddingNote ? (
             <Loader2 className='h-3.5 w-3.5 animate-spin' />
           ) : (
             <Plus className='h-3.5 w-3.5' />
@@ -76,22 +95,32 @@ export default function ErrandNotes({ errandId }: ErrandNotesProps) {
             No notes or operational warnings recorded for this errand run loop.
           </p>
         ) : (
-          notes.map((note) => (
-            <div
-              key={note.id}
-              className='flex items-start justify-between gap-2 p-2.5 bg-slate-50/60 rounded-xl border border-slate-100 group'
-            >
-              <p className='text-xs text-slate-600 font-medium leading-relaxed break-words max-w-[90%]'>
-                {note.content}
-              </p>
-              <button
-                onClick={() => deleteNote(note.id)}
-                className='text-slate-400 hover:text-rose-600 transition opacity-0 group-hover:opacity-100 shrink-0 mt-0.5'
+          notes.map((note) => {
+            const isDeletingThisNote = deletingId === note.id
+
+            return (
+              <div
+                key={note.id}
+                className='flex items-start justify-between gap-2 p-2.5 bg-slate-50/60 rounded-xl border border-slate-100 group transition'
               >
-                <Trash2 className='h-3 w-3' />
-              </button>
-            </div>
-          ))
+                <p className='text-xs text-slate-600 font-medium leading-relaxed break-words max-w-[90%]'>
+                  {note.content}
+                </p>
+                <button
+                  type='button'
+                  onClick={() => handleDeleteNote(note.id)}
+                  disabled={isDeletingThisNote || isDeletingNote}
+                  className='text-slate-400 hover:text-rose-600 transition opacity-0 group-hover:opacity-100 shrink-0 mt-0.5 disabled:opacity-50 outline-none cursor-pointer'
+                >
+                  {isDeletingThisNote ? (
+                    <Loader2 className='h-3 w-3 animate-spin text-rose-500' />
+                  ) : (
+                    <Trash2 className='h-3 w-3' />
+                  )}
+                </button>
+              </div>
+            )
+          })
         )}
       </div>
     </div>
