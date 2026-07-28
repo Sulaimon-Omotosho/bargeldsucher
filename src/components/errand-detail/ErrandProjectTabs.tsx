@@ -1,23 +1,42 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import {
   CalendarRange,
   ListFilter,
   Lightbulb,
   FileText,
   Paperclip,
+  Users,
+  ShieldAlert,
+  UserCheck,
+  Eye,
 } from 'lucide-react'
-import { Expense, SerializedExpense } from '@/types/types'
+import { SerializedExpense } from '@/types/types'
 
 import ErrandExpenseLedger from './ErrandExpenseLedger'
 import ErrandActivityFeed from './ErrandActivityFeed'
 import ErrandNotes from './ErrandNotes'
 import ErrandSmartInsights from './ErrandSmartInsight'
+import ErrandCollaborators from './ErrandCollaborators'
+
+export interface ErrandMemberDetail {
+  id: string
+  userId: string
+  role: 'OWNER' | 'COLLABORATOR' | 'VIEWER' | string
+  allocatedBudget?: number | null
+  user?: {
+    id: string
+    name?: string | null
+    email?: string | null
+    image?: string | null
+  }
+}
 
 interface ErrandProjectTabsProps {
   id: string
   expenses: SerializedExpense[]
+  members?: ErrandMemberDetail[]
   initialFunding: number
   remainingCash: number
   isCompleted: boolean
@@ -25,11 +44,18 @@ interface ErrandProjectTabsProps {
   canLogExpense?: boolean
 }
 
-type TabType = 'timeline' | 'expenses' | 'insights' | 'notes' | 'attachments'
+type TabType =
+  | 'timeline'
+  | 'expenses'
+  | 'collaborators'
+  | 'insights'
+  | 'notes'
+  | 'attachments'
 
 export default function ErrandProjectTabs({
   id,
-  expenses,
+  expenses = [],
+  members = [],
   initialFunding,
   remainingCash,
   isCompleted,
@@ -41,10 +67,35 @@ export default function ErrandProjectTabs({
   const tabItems = [
     { id: 'timeline', label: 'Timeline', icon: CalendarRange },
     { id: 'expenses', label: 'Expense List', icon: ListFilter },
+    {
+      id: 'collaborators',
+      label: `Collaborators (${members.length})`,
+      icon: Users,
+    },
     { id: 'insights', label: 'Insights', icon: Lightbulb },
     { id: 'notes', label: 'Notes', icon: FileText },
     { id: 'attachments', label: 'Attachments', icon: Paperclip },
   ]
+
+  // Calculate total spent per user from the expenses list
+  const spentByUserMap = useMemo(() => {
+    const map = new Map<string, number>()
+    expenses.forEach((expense: any) => {
+      // Map spending to createdById or userId on expense
+      const uId = expense.createdById || expense.userId || expense.user?.id
+      if (uId) {
+        const current = map.get(uId) || 0
+        map.set(uId, current + Number(expense.amount || 0))
+      }
+    })
+    return map
+  }, [expenses])
+
+  const formatCurrency = (val: number) =>
+    new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(val)
 
   return (
     <div className='space-y-4 w-full'>
@@ -80,6 +131,15 @@ export default function ErrandProjectTabs({
             expenses={expenses}
             isCompleted={isCompleted}
             canLogExpense={canLogExpense}
+          />
+        )}
+
+        {/* Scrollable Collaborators Tab */}
+        {activeTab === 'collaborators' && (
+          <ErrandCollaborators
+            members={members}
+            expenses={expenses}
+            initialFunding={initialFunding}
           />
         )}
 

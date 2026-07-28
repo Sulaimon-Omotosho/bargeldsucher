@@ -22,6 +22,7 @@ export default function ErrandDetailPage() {
   const {
     errand,
     userRole,
+    members,
     isOwner,
     isCollaborator,
     isViewer,
@@ -161,6 +162,7 @@ export default function ErrandDetailPage() {
             remainingCash={remainingCash}
             isCompleted={isCompleted}
             canLogExpense={canLogExpense}
+            members={members as any}
           />
 
           <div className='block md:hidden'>

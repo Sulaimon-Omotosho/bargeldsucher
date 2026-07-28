@@ -14,10 +14,8 @@ export interface UpdateErrandArgs {
 }
 
 export interface ErrandMemberInput {
-  // id: string
-  // errandId: string
   userId: string
-  role: 'OWNER' | 'COLLABORATOR' | 'VIEWER'
+  role: 'OWNER' | 'COLLABORATOR' | 'VIEWER' | string
   allocatedBudget?: string | number | null
 }
 
@@ -164,13 +162,40 @@ export function useErrand(id: string) {
     enabled: !!id,
   })
 
+  const errandMembers = errand?.members || []
+
+  // Direct check if current user is creator/owner of the errand
+  const isOwner = Boolean(
+    currentUserId &&
+    ((errand as any)?.userId === currentUserId ||
+      (errand as any)?.createdById === currentUserId),
+  )
+
   // Match current user in the errand's members array
-  const currentMember = errand?.members?.find(
+  const currentMember = errandMembers.find(
     (member) => member.userId === currentUserId,
   )
 
-  // Derive explicit user role right inside the hook
-  const userRole: UserRole = (currentMember?.role as UserRole) || 'VIEWER'
+  // Derive explicit user role safely
+  let userRole: UserRole = 'VIEWER'
+
+  if (isOwner) {
+    userRole = 'OWNER'
+  } else if (currentMember?.role === 'OWNER') {
+    userRole = 'OWNER'
+  } else if (
+    currentMember?.role === 'COLLABORATOR' ||
+    currentMember?.role === 'ADMIN'
+  ) {
+    userRole = 'COLLABORATOR'
+  } else if (currentMember?.role === 'VIEWER') {
+    userRole = 'VIEWER'
+  }
+
+  // Derive explicit boolean flags based on verified userRole
+  const derivedIsOwner = userRole === 'OWNER'
+  const derivedIsCollaborator = userRole === 'COLLABORATOR'
+  const derivedIsViewer = userRole === 'VIEWER' && !derivedIsOwner
 
   // Update Errand Mutation
   const updateErrandMutation = useMutation({
@@ -269,10 +294,11 @@ export function useErrand(id: string) {
   return {
     // Data & Derived Role State
     errand,
+    members: errandMembers,
     userRole,
-    isOwner: userRole === 'OWNER',
-    isCollaborator: userRole === 'COLLABORATOR',
-    isViewer: userRole === 'VIEWER',
+    isOwner: derivedIsOwner,
+    isCollaborator: derivedIsCollaborator,
+    isViewer: derivedIsViewer,
 
     // Main States
     isLoading,

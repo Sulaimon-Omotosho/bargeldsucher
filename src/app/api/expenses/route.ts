@@ -108,6 +108,7 @@ export async function POST(req: Request) {
           receiptUrl: receiptUrl || null,
           expenseDate: expenseDate ? new Date(expenseDate) : new Date(),
           errandId,
+          userId,
         },
       })
 
