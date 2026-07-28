@@ -36,6 +36,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 
 type NavigationItem = {
   name: string
@@ -111,11 +112,19 @@ export function AppSidebar() {
       collapsible='icon'
       className='border-r border-slate-200/60 bg-slate-50/50 backdrop-blur-md'
     >
-      <SidebarHeader className='p-4'>
-        <div className='flex items-center gap-3 px-1'>
-          <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 font-bold text-white shadow-sm ring-1 ring-emerald-600/10'>
-            B
-          </div>
+      <SidebarHeader className='py-4 px-2'>
+        <div className='flex items-center px-1'>
+          <Link href='/' className='flex items-center w-fit relative '>
+            <div className='relative h-10 w-10 overflow-hidden rounded-lg'>
+              <Image
+                src='/Assets/BSLogo.png'
+                alt='Logo'
+                fill
+                className='object-contain'
+                priority
+              />
+            </div>
+          </Link>
 
           <div className='flex flex-col group-data-[collapsible=icon]:hidden'>
             <span className='text-sm font-bold leading-none tracking-tight text-slate-900'>
@@ -163,14 +172,8 @@ export function AppSidebar() {
                 )
               })}
 
-              <Collapsible
-                open={isSettingsPage}
-                // open={open}
-                // onOpenChange={setOpen}
-                className='group/collapsible'
-              >
+              <Collapsible open={isSettingsPage} className='group/collapsible'>
                 <SidebarMenuItem>
-                  {/* <CollapsibleTrigger className='w-full'> */}
                   <Link href='/settings?tab=profile'>
                     <SidebarMenuButton
                       tooltip='Settings'

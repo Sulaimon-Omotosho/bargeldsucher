@@ -14,6 +14,7 @@ import { LoginSchema, RegisterSchema } from '@/lib/ValidationSchema'
 import z from 'zod'
 import { Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 type LoginFormValues = z.infer<typeof LoginSchema>
 type RegisterFormValues = z.infer<typeof RegisterSchema>
@@ -132,9 +133,26 @@ export default function AuthPage() {
         >
           <div className='w-full max-w-sm mx-auto space-y-6'>
             {/* Logo  */}
-            <Link href='/' className='flex items-center gap-2 w-fit md:hidden'>
+            {/* <Link href='/' className='flex items-center gap-2 w-fit md:hidden'>
               <div className='h-8 w-8 rounded-lg bg-emerald-500 flex items-center justify-center font-bold text-slate-900'>
                 B
+              </div>
+              <span className='font-semibold text-lg tracking-wider'>
+                bargeldsucher
+              </span>
+            </Link> */}
+            <Link
+              href='/'
+              className='flex items-center gap-2 w-fit relative md:hidden'
+            >
+              <div className='relative h-8 w-8 overflow-hidden rounded-lg'>
+                <Image
+                  src='/Assets/BSLogo.png'
+                  alt='Logo'
+                  fill
+                  className='object-contain'
+                  priority
+                />
               </div>
               <span className='font-semibold text-lg tracking-wider'>
                 bargeldsucher
@@ -266,9 +284,18 @@ export default function AuthPage() {
         >
           <div className='w-full max-w-sm mx-auto space-y-4 sm:space-y-6'>
             {/* Logo  */}
-            <Link href='/' className='flex items-center gap-2 w-fit md:hidden'>
-              <div className='h-8 w-8 rounded-lg bg-emerald-500 flex items-center justify-center font-bold text-slate-900'>
-                B
+            <Link
+              href='/'
+              className='flex items-center gap-2 w-fit relative md:hidden'
+            >
+              <div className='relative h-8 w-8 overflow-hidden rounded-lg'>
+                <Image
+                  src='/Assets/BSLogo.png'
+                  alt='Logo'
+                  fill
+                  className='object-contain'
+                  priority
+                />
               </div>
               <span className='font-semibold text-lg tracking-wider'>
                 bargeldsucher
@@ -418,28 +445,6 @@ export default function AuthPage() {
                     {registerErrors.password?.message}
                   </p>
                 )}
-
-                {/* <div className='rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-2'>
-                  <PasswordRequirement valid={passwordRules.length}>
-                    At least 8 characters
-                  </PasswordRequirement>
-
-                  <PasswordRequirement valid={passwordRules.uppercase}>
-                    One uppercase letter
-                  </PasswordRequirement>
-
-                  <PasswordRequirement valid={passwordRules.lowercase}>
-                    One lowercase letter
-                  </PasswordRequirement>
-
-                  <PasswordRequirement valid={passwordRules.number}>
-                    One number
-                  </PasswordRequirement>
-
-                  <PasswordRequirement valid={passwordRules.special}>
-                    One special character
-                  </PasswordRequirement>
-                </div> */}
               </div>
               <div className='space-y-1'>
                 <Label htmlFor='reg-confirm-password'>Confirm Password</Label>
@@ -451,18 +456,6 @@ export default function AuthPage() {
                     onPaste={(e) => e.preventDefault()}
                     className='pr-10'
                   />
-
-                  {/* <button
-                    type='button'
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700'
-                  >
-                    {showPassword ? (
-                      <EyeOff className='h-4 w-4' />
-                    ) : (
-                      <Eye className='h-4 w-4' />
-                    )}
-                  </button> */}
                 </div>
                 {registerErrors.confirmPassword && (
                   <p className='text-red-500 text-sm'>
@@ -497,28 +490,34 @@ export default function AuthPage() {
 
         {/* SLIDING INTRO PANEL OVERLAY - HIDDEN COMPLETELY ON MOBILE VIEWPORTS */}
         <div
-          className={`hidden absolute top-0 left-0 h-full w-1/2 bg-slate-900 text-white transition-transform duration-500 ease-in-out md:flex flex-col justify-between p-12 z-20 ${
-            activeTab === 'login' ? 'translate-x-full' : 'translate-x-0'
-          }`}
-          style={{
-            backgroundImage:
-              'linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.8)), url("https://images.unsplash.com/photo-1628126235206-5260b9ea6441?q=80&w=1200")',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
+          className={`hidden absolute top-0 left-0 h-full w-1/2 bg-slate-900 text-white transition-transform duration-500 ease-in-out md:flex flex-col justify-between p-12 z-20 overflow-hidden ${activeTab === 'login' ? 'translate-x-full' : 'translate-x-0'}`}
         >
-          {/* Brand/Logo Area */}
-          <Link href='/' className='flex items-center gap-2 w-fit'>
-            <div className='h-8 w-8 rounded-lg bg-emerald-500 flex items-center justify-center font-bold text-slate-900'>
-              B
+          <Image
+            src='/Assets/BSLogin.jpg'
+            alt='Bargeldsucher Login BG'
+            fill
+            priority
+            className='object-cover object-center -z-10'
+          />
+          <div className='absolute inset-0 bg-gradient-to-br from-slate-950/95 via-slate-900/85 to-slate-800/80 -z-10' />
+          <Link
+            href='/'
+            className='flex items-center gap-2 w-fit relative z-10'
+          >
+            <div className='relative h-8 w-8 overflow-hidden rounded-lg'>
+              <Image
+                src='/Assets/BSLogo.png'
+                alt='Logo'
+                fill
+                className='object-contain'
+                priority
+              />
             </div>
             <span className='font-semibold text-lg tracking-wider text-emerald-400'>
               bargeldsucher
             </span>
           </Link>
-
-          {/* Contextual Context Message */}
-          <div className='space-y-4 max-w-xs transition-opacity duration-300'>
+          <div className='space-y-4 max-w-xs transition-opacity duration-300 relative z-10'>
             {activeTab === 'login' ? (
               <>
                 <h2 className='text-3xl font-bold leading-tight'>New here?</h2>
@@ -540,8 +539,7 @@ export default function AuthPage() {
             )}
           </div>
 
-          {/* Integrated Toggler System using Shadcn Tabs */}
-          <div className='w-full flex justify-center'>
+          <div className='w-full flex justify-center relative z-10'>
             <Tabs
               value={activeTab}
               onValueChange={(val) => {
@@ -553,13 +551,13 @@ export default function AuthPage() {
               <TabsList className='grid w-full grid-cols-2 bg-white/10 p-0 text-white border border-white/10 backdrop-blur-sm'>
                 <TabsTrigger
                   value='login'
-                  className='data-[state=active]:bg-white data-[state=active]:text-slate-900 rounded-r-none'
+                  className='data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:cursor-arrow text-slate-200 rounded-r-none cursor-pointer'
                 >
                   Login
                 </TabsTrigger>
                 <TabsTrigger
                   value='register'
-                  className='data-[state=active]:bg-white data-[state=active]:text-slate-900 rounded-l-none'
+                  className='data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:cursor-default text-slate-200 rounded-l-none cursor-pointer'
                 >
                   Register
                 </TabsTrigger>

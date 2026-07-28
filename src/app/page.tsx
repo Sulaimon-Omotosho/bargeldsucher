@@ -11,6 +11,7 @@ import {
   Zap,
   Layers,
 } from 'lucide-react'
+import Image from 'next/image'
 
 export default function Home() {
   return (
@@ -20,16 +21,24 @@ export default function Home() {
 
       {/* --- Top Navigation Bar --- */}
       <header className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between border-b border-slate-200/40 backdrop-blur-md sticky top-0 z-50'>
-        <div className='flex items-center gap-2.5 select-none'>
-          <div className='h-9 w-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center font-bold text-white shadow-sm shadow-emerald-200/80 ring-1 ring-emerald-600/10'>
-            B
-          </div>
+        <div className='flex items-center select-none'>
+          <Link href='/' className='flex items-center gap-2 w-fit relative '>
+            <div className='relative h-10 w-10 overflow-hidden rounded-lg'>
+              <Image
+                src='/Assets/BSLogo.png'
+                alt='Logo'
+                fill
+                className='object-contain'
+                priority
+              />
+            </div>
+          </Link>
           <div className='flex flex-col'>
             <span className='font-bold text-sm tracking-tight text-slate-900 leading-none mb-0.5'>
-              bargeldsucher
+              Bargeldsucher
             </span>
             <span className='text-[10px] text-slate-400 font-semibold tracking-wider uppercase leading-none'>
-              Cash Engine
+              Cash MANAGER
             </span>
           </div>
         </div>
