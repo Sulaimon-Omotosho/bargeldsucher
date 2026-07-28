@@ -98,10 +98,11 @@ export default function UserDropdown({ data: user }: UserDropdownProps) {
 
         {/* Sign Out Trigger */}
         <DropdownMenuItem
-          onSelect={(e) => {
-            e.preventDefault()
-            signOut({ callbackUrl: '/login' })
-          }}
+          onClick={() =>
+            signOut({
+              callbackUrl: '/login',
+            })
+          }
           className='flex items-center gap-2 cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-700'
         >
           <LogOut className='h-4 w-4' />
